@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swiftfilez"
+version = "0.3.0"
+description = "Production-minded file and artifact operations CLI for humans and automation"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Scott", email = "38087336+mergemaven11@users.noreply.github.com"}]
+dependencies = [
+  "typer>=0.12,<1",
+  "rich>=13.7,<15",
+  "python-docx>=1.1,<2",
+  "pypdf>=4.2,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "build>=1.2,<2"]
+
+[project.scripts]
+swf = "swift_files.app:main"
+swiftfilez = "swift_files.app:main"
+
+[tool.setuptools.packages.find]
+include = ["swift_files*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
