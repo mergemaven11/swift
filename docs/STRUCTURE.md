@@ -1,26 +1,25 @@
-## Project Structure
+# Project structure
 
-```yaml
-
-swift_files/
-├── Dockerfile
+```text
+.
+├── .github/workflows/ci.yml   # test/package/container pipeline
+├── Dockerfile                 # non-root runtime image
+├── Makefile                   # developer workflow shortcuts
+├── main.py                    # source-checkout CLI launcher
+├── pyproject.toml             # package metadata + console commands
 ├── swift_files/
-│   ├── __init__.py
-│   ├── cli.py
-│   ├── csv/
-│   │   ├── __init__.py
-│   │   └── csv_module.py
-│   ├── docx/
-│   │   ├── __init__.py
-│   │   └── docx_module.py
-│   └── pdf/
-│       ├── __init__.py
-│       └── pdf_module.py
-├── tests/
-│   ├── __init__.py
-│   ├── test_csv_module.py
-│   ├── test_docx_module.py
-│   └── test_pdf_module.py
-└── README.md
-
+│   ├── app.py                 # Typer command surface
+│   ├── config.py              # environment-driven runtime settings
+│   ├── core.py                # hashing, scans, manifests, duplicates, safe copy
+│   ├── csv_ops.py             # CSV inspect/dedupe/sort/validate/summarize
+│   ├── docx_ops.py            # DOCX inspect/extract/copy
+│   ├── pdf_ops.py             # PDF inspect/extract/copy
+│   ├── ui.py                  # Rich + JSON presentation helpers
+│   └── *.py                   # compatibility exports for prototype modules
+├── tests/                     # unit and CLI policy-gate tests
+└── docs/
+    ├── PLATFORM_ENGINEERING.md
+    └── STRUCTURE.md
 ```
+
+The main dependency direction is `app -> domain operations -> filesystem`. Presentation code is kept out of the processing modules so the same functions can be reused from automation or future services.

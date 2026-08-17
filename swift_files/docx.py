@@ -1,10 +1,4 @@
-# docx.py
-class DocxFile:
-    def __init__(self, filename):
-        self.filename = filename
+"""Compatibility exports for DOCX operations."""
+from .docx_ops import copy_docx, extract_docx, extract_text, inspect_docx
 
-    def read(self):
-        print(f"Reading from DOCX file: {self.filename}")
-
-    def write(self, contents):
-        print(f"Writing to DOCX file: {self.filename}")
+__all__ = ["inspect_docx", "extract_text", "extract_docx", "copy_docx"]

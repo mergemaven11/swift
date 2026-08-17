@@ -1,18 +1,4 @@
-from .swift_doc import SwiftDoc
+"""Compatibility exports for CSV operations."""
+from .csv_ops import dedupe_csv, find_duplicate_rows, inspect_csv, sort_csv, summarize_csv, validate_csv
 
-class CsvFile(SwiftDoc):
-    def _open(self):
-        # open the CSV file in read mode
-        pass
-
-    def _read_contents(self):
-        # read the contents of the CSV file
-        pass
-
-    def _write_contents(self, contents):
-        # write the contents to the CSV file
-        pass
-
-    def _close(self):
-        # close the CSV file
-        pass
+__all__ = ["inspect_csv", "find_duplicate_rows", "dedupe_csv", "sort_csv", "validate_csv", "summarize_csv"]
