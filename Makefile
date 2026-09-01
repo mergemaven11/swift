@@ -5,7 +5,9 @@ install:
 
 test:
 	python -m compileall -q swift_files main.py
-	python -m pytest -q
+	python -m ruff format --check swift_files tests main.py
+	python -m ruff check swift_files tests main.py
+	python -m pytest
 
 smoke:
 	python main.py --version

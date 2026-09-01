@@ -1,8 +1,11 @@
 """PDF operations."""
+
 from __future__ import annotations
 
 from pathlib import Path
+
 from pypdf import PdfReader
+
 from .core import SwiftFilezError, atomic_write_text, safe_copy
 
 
@@ -12,9 +15,8 @@ def _reader(path: str | Path, password: str | None = None) -> PdfReader:
         raise SwiftFilezError(f"PDF file not found: {pdf_path}")
     try:
         reader = PdfReader(str(pdf_path))
-        if reader.is_encrypted:
-            if not password or not reader.decrypt(password):
-                raise SwiftFilezError("PDF is encrypted; provide --password")
+        if reader.is_encrypted and (not password or not reader.decrypt(password)):
+            raise SwiftFilezError("PDF is encrypted; provide --password")
         return reader
     except SwiftFilezError:
         raise
@@ -25,7 +27,15 @@ def _reader(path: str | Path, password: str | None = None) -> PdfReader:
 def inspect_pdf(path: str | Path, password: str | None = None) -> dict:
     reader = _reader(path, password)
     metadata = reader.metadata or {}
-    return {"path": str(Path(path)), "pages": len(reader.pages), "encrypted": bool(getattr(reader, "is_encrypted", False)), "title": metadata.get("/Title"), "author": metadata.get("/Author"), "subject": metadata.get("/Subject"), "creator": metadata.get("/Creator")}
+    return {
+        "path": str(Path(path)),
+        "pages": len(reader.pages),
+        "encrypted": bool(getattr(reader, "is_encrypted", False)),
+        "title": metadata.get("/Title"),
+        "author": metadata.get("/Author"),
+        "subject": metadata.get("/Subject"),
+        "creator": metadata.get("/Creator"),
+    }
 
 
 def extract_text(path: str | Path, password: str | None = None) -> str:

@@ -1,4 +1,5 @@
 """Core file and artifact operations."""
+
 from __future__ import annotations
 
 import hashlib
@@ -7,11 +8,12 @@ import mimetypes
 import os
 import shutil
 import tempfile
+from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import suppress
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
 from uuid import uuid4
 
 from .config import load_settings
@@ -59,10 +61,8 @@ def inspect_file(path: str | Path, algorithm: str | None = None, base: Path | No
     algo = (algorithm or load_settings().hash_algorithm).lower()
     display = file_path
     if base is not None:
-        try:
+        with suppress(ValueError):
             display = file_path.relative_to(base)
-        except ValueError:
-            pass
     return FileRecord(
         path=display.as_posix(),
         size=stat.st_size,
@@ -89,7 +89,9 @@ def iter_files(root: str | Path, include_hidden: bool = False) -> list[Path]:
     return sorted(files)
 
 
-def scan_files(root: str | Path, *, algorithm: str | None = None, workers: int | None = None, include_hidden: bool = False) -> list[FileRecord]:
+def scan_files(
+    root: str | Path, *, algorithm: str | None = None, workers: int | None = None, include_hidden: bool = False
+) -> list[FileRecord]:
     root_path = Path(root)
     base = root_path if root_path.is_dir() else root_path.parent
     files = iter_files(root_path, include_hidden=include_hidden)
@@ -109,10 +111,8 @@ def atomic_write_text(path: str | Path, text: str) -> Path:
             os.fsync(handle.fileno())
         os.replace(temp_name, target)
     except Exception:
-        try:
+        with suppress(OSError):
             os.unlink(temp_name)
-        except OSError:
-            pass
         raise
     return target
 
@@ -134,7 +134,9 @@ def build_manifest(root: str | Path, algorithm: str | None = None, workers: int 
     }
 
 
-def write_manifest(root: str | Path, output: str | Path, algorithm: str | None = None, workers: int | None = None) -> Path:
+def write_manifest(
+    root: str | Path, output: str | Path, algorithm: str | None = None, workers: int | None = None
+) -> Path:
     return atomic_write_json(output, build_manifest(root, algorithm=algorithm, workers=workers))
 
 
@@ -157,7 +159,13 @@ def verify_manifest(manifest_path: str | Path, root: str | Path | None = None, s
     missing: list[str] = []
     changed: list[dict] = []
     for rel_path, record in expected.items():
-        target = root_path / rel_path
+        if not isinstance(rel_path, str) or not rel_path:
+            raise SwiftFilezError("Manifest contains an invalid file path")
+        target = (root_path / rel_path).resolve()
+        try:
+            target.relative_to(root_path)
+        except ValueError as exc:
+            raise SwiftFilezError(f"Manifest path escapes verification root: {rel_path}") from exc
         if not target.is_file():
             missing.append(rel_path)
             continue
@@ -174,7 +182,14 @@ def verify_manifest(manifest_path: str | Path, root: str | Path | None = None, s
             pass
         unexpected = sorted(current - set(expected))
     ok = not missing and not changed and not unexpected
-    return {"ok": ok, "root": root_path.as_posix(), "checked": len(expected), "missing": missing, "changed": changed, "unexpected": unexpected}
+    return {
+        "ok": ok,
+        "root": root_path.as_posix(),
+        "checked": len(expected),
+        "missing": missing,
+        "changed": changed,
+        "unexpected": unexpected,
+    }
 
 
 def find_duplicates(root: str | Path, algorithm: str | None = None, workers: int | None = None) -> list[list[Path]]:

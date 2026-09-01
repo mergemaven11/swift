@@ -1,11 +1,11 @@
 """SwiftFilez command-line application."""
+
 from __future__ import annotations
 
 import os
 import platform
 import sys
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich import box
@@ -50,7 +50,9 @@ def _fail(exc: Exception) -> None:
 
 
 @app.callback(invoke_without_command=True)
-def root(ctx: typer.Context, version: bool = typer.Option(False, "--version", help="Show version and exit.", is_eager=True)):
+def root(
+    ctx: typer.Context, version: bool = typer.Option(False, "--version", help="Show version and exit.", is_eager=True)
+):
     if version:
         typer.echo(f"SwiftFilez {__version__}")
         raise typer.Exit()
@@ -59,18 +61,28 @@ def root(ctx: typer.Context, version: bool = typer.Option(False, "--version", he
 
 
 @app.command("inspect")
-def inspect_command(path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True), algorithm: Optional[str] = typer.Option(None, "--algorithm", "-a"), json_output: bool = typer.Option(False, "--json")):
+def inspect_command(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    algorithm: str | None = typer.Option(None, "--algorithm", "-a"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Inspect one artifact: metadata, MIME type, size, mtime, and cryptographic hash."""
     try:
         record = inspect_file(path, algorithm)
     except SwiftFilezError as exc:
         _fail(exc)
         return
-    emit_json(record.to_dict()) if json_output else render_mapping("Artifact", {**record.to_dict(), "size": human_bytes(record.size)})
+    emit_json(record.to_dict()) if json_output else render_mapping(
+        "Artifact", {**record.to_dict(), "size": human_bytes(record.size)}
+    )
 
 
 @app.command("hash")
-def hash_command(path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True), algorithm: Optional[str] = typer.Option(None, "--algorithm", "-a"), json_output: bool = typer.Option(False, "--json")):
+def hash_command(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    algorithm: str | None = typer.Option(None, "--algorithm", "-a"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Hash a file for integrity checks and automation."""
     try:
         digest = hash_file(path, algorithm)
@@ -82,7 +94,12 @@ def hash_command(path: Path = typer.Argument(..., exists=True, file_okay=True, d
 
 
 @app.command("scan")
-def scan_command(path: Path = typer.Argument(Path("."), exists=True, file_okay=True, dir_okay=True, readable=True), workers: Optional[int] = typer.Option(None, "--workers", "-w", min=1, max=32), include_hidden: bool = typer.Option(False, "--include-hidden"), json_output: bool = typer.Option(False, "--json")):
+def scan_command(
+    path: Path = typer.Argument(Path("."), exists=True, file_okay=True, dir_okay=True, readable=True),
+    workers: int | None = typer.Option(None, "--workers", "-w", min=1, max=32),
+    include_hidden: bool = typer.Option(False, "--include-hidden"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Build a concurrent inventory of files below a path."""
     try:
         records = scan_files(path, workers=workers, include_hidden=include_hidden)
@@ -97,7 +114,12 @@ def scan_command(path: Path = typer.Argument(Path("."), exists=True, file_okay=T
 
 
 @app.command("duplicates")
-def duplicates_command(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, dir_okay=True, readable=True), quarantine_dir: Optional[Path] = typer.Option(None, "--quarantine-dir"), apply: bool = typer.Option(False, "--apply", help="Actually move duplicates; default is dry-run."), json_output: bool = typer.Option(False, "--json")):
+def duplicates_command(
+    path: Path = typer.Argument(Path("."), exists=True, file_okay=False, dir_okay=True, readable=True),
+    quarantine_dir: Path | None = typer.Option(None, "--quarantine-dir"),
+    apply: bool = typer.Option(False, "--apply", help="Actually move duplicates; default is dry-run."),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Find byte-identical duplicate files and optionally quarantine extra copies."""
     try:
         groups = find_duplicates(path)
@@ -106,7 +128,11 @@ def duplicates_command(path: Path = typer.Argument(Path("."), exists=True, file_
     except (SwiftFilezError, OSError) as exc:
         _fail(exc)
         return
-    payload = {"duplicate_groups": [[p.as_posix() for p in group] for group in groups], "duplicate_file_count": sum(max(0, len(group) - 1) for group in groups), **result}
+    payload = {
+        "duplicate_groups": [[p.as_posix() for p in group] for group in groups],
+        "duplicate_file_count": sum(max(0, len(group) - 1) for group in groups),
+        **result,
+    }
     if json_output:
         emit_json(payload)
         return
@@ -126,7 +152,13 @@ def duplicates_command(path: Path = typer.Argument(Path("."), exists=True, file_
 
 
 @manifest_app.command("build")
-def manifest_build(root_path: Path = typer.Argument(Path("."), exists=True, file_okay=False, dir_okay=True, readable=True), output: Path = typer.Option(Path("swiftfilez-manifest.json"), "--output", "-o"), algorithm: Optional[str] = typer.Option(None, "--algorithm", "-a"), workers: Optional[int] = typer.Option(None, "--workers", "-w", min=1, max=32), json_output: bool = typer.Option(False, "--json")):
+def manifest_build(
+    root_path: Path = typer.Argument(Path("."), exists=True, file_okay=False, dir_okay=True, readable=True),
+    output: Path = typer.Option(Path("swiftfilez-manifest.json"), "--output", "-o"),
+    algorithm: str | None = typer.Option(None, "--algorithm", "-a"),
+    workers: int | None = typer.Option(None, "--workers", "-w", min=1, max=32),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Create a versioned integrity manifest for a directory tree."""
     try:
         payload = build_manifest(root_path, algorithm=algorithm, workers=workers)
@@ -139,7 +171,12 @@ def manifest_build(root_path: Path = typer.Argument(Path("."), exists=True, file
 
 
 @manifest_app.command("verify")
-def manifest_verify(manifest: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True), root_path: Optional[Path] = typer.Option(None, "--root", exists=True, file_okay=False, dir_okay=True), strict: bool = typer.Option(False, "--strict"), json_output: bool = typer.Option(False, "--json")):
+def manifest_verify(
+    manifest: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    root_path: Path | None = typer.Option(None, "--root", exists=True, file_okay=False, dir_okay=True),
+    strict: bool = typer.Option(False, "--strict"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Verify artifact integrity; exits non-zero on drift."""
     try:
         result = verify_manifest(manifest, root=root_path, strict=strict)
@@ -162,7 +199,11 @@ def csv_inspect(path: Path, json_output: bool = typer.Option(False, "--json")):
 
 
 @csv_app.command("duplicates")
-def csv_duplicates(path: Path, key: Optional[list[str]] = typer.Option(None, "--key", "-k"), json_output: bool = typer.Option(False, "--json")):
+def csv_duplicates(
+    path: Path,
+    key: list[str] | None = typer.Option(None, "--key", "-k"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     try:
         result = csv_ops.find_duplicate_rows(path, key)
     except SwiftFilezError as exc:
@@ -183,7 +224,13 @@ def csv_duplicates(path: Path, key: Optional[list[str]] = typer.Option(None, "--
 
 
 @csv_app.command("dedupe")
-def csv_dedupe(path: Path, output: Path = typer.Option(..., "--output", "-o"), key: Optional[list[str]] = typer.Option(None, "--key", "-k"), keep: str = typer.Option("first", "--keep"), json_output: bool = typer.Option(False, "--json")):
+def csv_dedupe(
+    path: Path,
+    output: Path = typer.Option(..., "--output", "-o"),
+    key: list[str] | None = typer.Option(None, "--key", "-k"),
+    keep: str = typer.Option("first", "--keep"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     try:
         result = csv_ops.dedupe_csv(path, output, key, keep)
     except (SwiftFilezError, OSError) as exc:
@@ -193,7 +240,13 @@ def csv_dedupe(path: Path, output: Path = typer.Option(..., "--output", "-o"), k
 
 
 @csv_app.command("sort")
-def csv_sort(path: Path, column: str = typer.Option(..., "--column", "-c"), output: Path = typer.Option(..., "--output", "-o"), reverse: bool = typer.Option(False, "--reverse"), json_output: bool = typer.Option(False, "--json")):
+def csv_sort(
+    path: Path,
+    column: str = typer.Option(..., "--column", "-c"),
+    output: Path = typer.Option(..., "--output", "-o"),
+    reverse: bool = typer.Option(False, "--reverse"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     try:
         result = csv_ops.sort_csv(path, output, column, reverse)
     except (SwiftFilezError, OSError) as exc:
@@ -203,7 +256,11 @@ def csv_sort(path: Path, column: str = typer.Option(..., "--column", "-c"), outp
 
 
 @csv_app.command("validate")
-def csv_validate(path: Path, required: list[str] = typer.Option(..., "--required", "-r"), json_output: bool = typer.Option(False, "--json")):
+def csv_validate(
+    path: Path,
+    required: list[str] = typer.Option(..., "--required", "-r"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Policy gate for required CSV columns and non-blank required values."""
     try:
         result = csv_ops.validate_csv(path, required)
@@ -216,7 +273,12 @@ def csv_validate(path: Path, required: list[str] = typer.Option(..., "--required
 
 
 @csv_app.command("summarize")
-def csv_summarize(path: Path, group_by: str = typer.Option(..., "--group-by"), sum_column: list[str] = typer.Option(..., "--sum"), json_output: bool = typer.Option(False, "--json")):
+def csv_summarize(
+    path: Path,
+    group_by: str = typer.Option(..., "--group-by"),
+    sum_column: list[str] = typer.Option(..., "--sum"),
+    json_output: bool = typer.Option(False, "--json"),
+):
     """Group a CSV and total numeric columns (for example credits/debits by customer)."""
     try:
         result = csv_ops.summarize_csv(path, group_by, sum_column)
@@ -268,7 +330,11 @@ def docx_copy(path: Path, output: Path = typer.Option(..., "--output", "-o")):
 
 
 @pdf_app.command("inspect")
-def pdf_inspect(path: Path, password: Optional[str] = typer.Option(None, "--password", hide_input=True), json_output: bool = typer.Option(False, "--json")):
+def pdf_inspect(
+    path: Path,
+    password: str | None = typer.Option(None, "--password", hide_input=True),
+    json_output: bool = typer.Option(False, "--json"),
+):
     try:
         result = pdf_ops.inspect_pdf(path, password)
     except SwiftFilezError as exc:
@@ -278,7 +344,11 @@ def pdf_inspect(path: Path, password: Optional[str] = typer.Option(None, "--pass
 
 
 @pdf_app.command("extract")
-def pdf_extract(path: Path, output: Path = typer.Option(..., "--output", "-o"), password: Optional[str] = typer.Option(None, "--password", hide_input=True)):
+def pdf_extract(
+    path: Path,
+    output: Path = typer.Option(..., "--output", "-o"),
+    password: str | None = typer.Option(None, "--password", hide_input=True),
+):
     try:
         pdf_ops.extract_pdf(path, output, password)
     except (SwiftFilezError, OSError) as exc:
@@ -300,7 +370,16 @@ def pdf_copy(path: Path, output: Path = typer.Option(..., "--output", "-o")):
 @app.command("config")
 def config_command(json_output: bool = typer.Option(False, "--json")):
     settings = load_settings()
-    payload = {"hash_algorithm": settings.hash_algorithm, "workers": settings.workers, "quarantine_dir": settings.quarantine_dir.as_posix(), "environment": {ENV_HASH: os.getenv(ENV_HASH), ENV_WORKERS: os.getenv(ENV_WORKERS), ENV_QUARANTINE: os.getenv(ENV_QUARANTINE)}}
+    payload = {
+        "hash_algorithm": settings.hash_algorithm,
+        "workers": settings.workers,
+        "quarantine_dir": settings.quarantine_dir.as_posix(),
+        "environment": {
+            ENV_HASH: os.getenv(ENV_HASH),
+            ENV_WORKERS: os.getenv(ENV_WORKERS),
+            ENV_QUARANTINE: os.getenv(ENV_QUARANTINE),
+        },
+    }
     emit_json(payload) if json_output else render_mapping("Configuration", payload)
 
 
@@ -329,6 +408,14 @@ def doctor_command(json_output: bool = typer.Option(False, "--json")):
             console.print(f"{marker}  {name}: {check['value']}")
     if not ok:
         raise typer.Exit(code=2)
+
+
+@app.command("ui")
+def ui_command(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, dir_okay=True, readable=True)):
+    """Launch the interactive terminal dashboard."""
+    from .tui import SwiftFilezUI
+
+    SwiftFilezUI(path).run()
 
 
 def main() -> None:

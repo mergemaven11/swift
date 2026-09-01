@@ -1,11 +1,12 @@
 """CSV inspection, cleanup, validation, and reporting."""
+
 from __future__ import annotations
 
 import csv
 from collections import defaultdict
+from collections.abc import Iterable
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Iterable
 
 from .core import SwiftFilezError, atomic_write_text
 
@@ -34,7 +35,15 @@ def inspect_csv(path: str | Path) -> dict:
     fieldnames, rows = _read(path)
     duplicate_groups = find_duplicate_rows(path)
     blank_cells = sum(1 for row in rows for value in row.values() if value is None or not str(value).strip())
-    return {"path": str(Path(path)), "rows": len(rows), "columns": fieldnames, "column_count": len(fieldnames), "blank_cells": blank_cells, "duplicate_groups": len(duplicate_groups), "duplicate_rows": sum(len(group["row_numbers"]) - 1 for group in duplicate_groups)}
+    return {
+        "path": str(Path(path)),
+        "rows": len(rows),
+        "columns": fieldnames,
+        "column_count": len(fieldnames),
+        "blank_cells": blank_cells,
+        "duplicate_groups": len(duplicate_groups),
+        "duplicate_rows": sum(len(group["row_numbers"]) - 1 for group in duplicate_groups),
+    }
 
 
 def find_duplicate_rows(path: str | Path, keys: Iterable[str] | None = None) -> list[dict]:
@@ -47,6 +56,7 @@ def find_duplicate_rows(path: str | Path, keys: Iterable[str] | None = None) -> 
 
 def _serialize(fieldnames: list[str], rows: list[dict[str, str]]) -> str:
     from io import StringIO
+
     stream = StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=fieldnames, extrasaction="ignore")
     writer.writeheader()
@@ -79,7 +89,14 @@ def dedupe_csv(path: str | Path, output: str | Path, keys: Iterable[str] | None 
             reversed_kept.append(row)
         kept = list(reversed(reversed_kept))
     atomic_write_text(output, _serialize(fieldnames, kept))
-    return {"input_rows": len(rows), "output_rows": len(kept), "removed": len(rows) - len(kept), "output": str(Path(output)), "keys": selected_keys, "keep": keep}
+    return {
+        "input_rows": len(rows),
+        "output_rows": len(kept),
+        "removed": len(rows) - len(kept),
+        "output": str(Path(output)),
+        "keys": selected_keys,
+        "keep": keep,
+    }
 
 
 def sort_csv(path: str | Path, output: str | Path, column: str, reverse: bool = False) -> dict:
@@ -101,7 +118,12 @@ def validate_csv(path: str | Path, required_columns: Iterable[str]) -> dict:
             missing_values = [column for column in required if not (row.get(column) or "").strip()]
             if missing_values:
                 blank_required.append({"row": index, "columns": missing_values})
-    return {"ok": not missing_columns and not blank_required, "rows": len(rows), "missing_columns": missing_columns, "blank_required": blank_required}
+    return {
+        "ok": not missing_columns and not blank_required,
+        "rows": len(rows),
+        "missing_columns": missing_columns,
+        "blank_required": blank_required,
+    }
 
 
 def summarize_csv(path: str | Path, group_by: str, sum_columns: Iterable[str]) -> dict:
@@ -122,5 +144,8 @@ def summarize_csv(path: str | Path, group_by: str, sum_columns: Iterable[str]) -
                 totals[group][column] += Decimal(raw)
             except InvalidOperation:
                 invalid_cells.append({"row": index, "column": column, "value": row.get(column)})
-    groups = [{group_by: group, **{column: str(value) for column, value in values.items()}} for group, values in sorted(totals.items())]
+    groups = [
+        {group_by: group, **{column: str(value) for column, value in values.items()}}
+        for group, values in sorted(totals.items())
+    ]
     return {"group_by": group_by, "sum_columns": sum_cols, "groups": groups, "invalid_cells": invalid_cells}
