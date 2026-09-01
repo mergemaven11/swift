@@ -17,6 +17,8 @@
 
 ---
 
+![Swift files CLI UI Display](assets/swift.png)
+
 ## Why SwiftFilez exists
 
 Build and platform workflows constantly move files between developers, CI jobs, release directories, deployment systems, and archives. Those workflows need more than `cp` and a few one-off scripts: they need **integrity checks, deterministic output, safe mutation behavior, machine-readable results, and useful failure codes**.
