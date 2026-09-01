@@ -1,8 +1,11 @@
 """DOCX operations."""
+
 from __future__ import annotations
 
 from pathlib import Path
+
 from docx import Document
+
 from .core import SwiftFilezError, atomic_write_text, safe_copy
 
 
@@ -28,7 +31,15 @@ def extract_text(path: str | Path) -> str:
 def inspect_docx(path: str | Path) -> dict:
     document = _document(path)
     text = extract_text(path)
-    return {"path": str(Path(path)), "paragraphs": len(document.paragraphs), "tables": len(document.tables), "words": len(text.split()), "characters": len(text), "title": document.core_properties.title or None, "author": document.core_properties.author or None}
+    return {
+        "path": str(Path(path)),
+        "paragraphs": len(document.paragraphs),
+        "tables": len(document.tables),
+        "words": len(text.split()),
+        "characters": len(text),
+        "title": document.core_properties.title or None,
+        "author": document.core_properties.author or None,
+    }
 
 
 def extract_docx(path: str | Path, output: str | Path) -> Path:

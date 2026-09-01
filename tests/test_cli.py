@@ -1,4 +1,5 @@
 from typer.testing import CliRunner
+
 from swift_files.app import app
 
 runner = CliRunner()
@@ -6,7 +7,7 @@ runner = CliRunner()
 
 def test_version():
     result = runner.invoke(app, ["--version"])
-    assert result.exit_code == 0 and "SwiftFilez 0.3.0" in result.stdout
+    assert result.exit_code == 0 and "SwiftFilez 0.4.0" in result.stdout
 
 
 def test_doctor_json():
@@ -15,7 +16,9 @@ def test_doctor_json():
 
 
 def test_manifest_verify_exit_code_on_drift(tmp_path):
-    root = tmp_path / "root"; root.mkdir(); (root / "a.txt").write_text("one", encoding="utf-8")
+    root = tmp_path / "root"
+    root.mkdir()
+    (root / "a.txt").write_text("one", encoding="utf-8")
     manifest = tmp_path / "manifest.json"
     build = runner.invoke(app, ["manifest", "build", str(root), "--output", str(manifest)])
     assert build.exit_code == 0

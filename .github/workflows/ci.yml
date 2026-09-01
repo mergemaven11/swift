@@ -32,8 +32,20 @@ jobs:
           python -m pip install -e '.[dev]'
       - name: Compile
         run: python -m compileall -q swift_files main.py
+      - name: Lint
+        run: |
+          python -m ruff format --check swift_files tests main.py
+          python -m ruff check swift_files tests main.py
       - name: Test
-        run: python -m pytest -q
+        run: >-
+          python -m pytest
+          --cov=swift_files.core
+          --cov=swift_files.config
+          --cov=swift_files.csv_ops
+          --cov=swift_files.docx_ops
+          --cov=swift_files.pdf_ops
+          --cov-report=term-missing
+          --cov-fail-under=80
       - name: CLI smoke
         run: |
           swf --version
@@ -59,3 +71,16 @@ jobs:
         run: docker build -t swiftfilez:ci .
       - name: Container smoke
         run: docker run --rm swiftfilez:ci doctor --json
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit dependencies
+        run: |
+          python -m pip install --upgrade pip pip-audit
+          python -m pip install .
+          python -m pip_audit

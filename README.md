@@ -75,6 +75,16 @@ swf --version
 swf doctor
 ```
 
+Launch the interactive artifact console:
+
+```bash
+swf ui
+```
+
+The full-screen terminal dashboard provides directory scanning, artifact
+metrics, inventory results, metadata, MIME types, and SHA-256 digests while
+keeping every operation local to your machine.
+
 A source checkout can also run:
 
 ```bash
@@ -87,6 +97,7 @@ python main.py --help
 
 ```text
 swf
+├── ui                      launch the interactive artifact dashboard
 ├── inspect                 inspect a file and calculate metadata/hash
 ├── hash                    calculate a cryptographic digest
 ├── scan                    inventory a directory concurrently
