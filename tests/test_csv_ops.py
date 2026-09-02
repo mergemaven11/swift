@@ -1,9 +1,17 @@
+"""Document this first-party Python module."""
+
 import csv
 
 from swift_files.csv_ops import dedupe_csv, find_duplicate_rows, inspect_csv, sort_csv, summarize_csv, validate_csv
 
 
 def write_csv(path, rows):
+    """Handle write csv.
+
+    Args:
+        path: Function argument.
+        rows: Function argument.
+    """
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=["customer", "credit", "debit", "status"])
         writer.writeheader()
@@ -11,6 +19,11 @@ def write_csv(path, rows):
 
 
 def sample_rows():
+    """Handle sample rows.
+
+    Returns:
+        Function result.
+    """
     return [
         {"customer": "A", "credit": "100", "debit": "20", "status": "ok"},
         {"customer": "A", "credit": "100", "debit": "20", "status": "ok"},
@@ -19,6 +32,11 @@ def sample_rows():
 
 
 def test_csv_inspect_and_duplicates(tmp_path):
+    """Verify csv inspect and duplicates.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     write_csv(path, sample_rows())
     info = inspect_csv(path)
@@ -29,6 +47,11 @@ def test_csv_inspect_and_duplicates(tmp_path):
 
 
 def test_csv_dedupe(tmp_path):
+    """Verify csv dedupe.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     out = tmp_path / "clean.csv"
     write_csv(path, sample_rows())
@@ -38,6 +61,11 @@ def test_csv_dedupe(tmp_path):
 
 
 def test_csv_dedupe_by_key(tmp_path):
+    """Verify csv dedupe by key.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     out = tmp_path / "clean.csv"
     rows = sample_rows()
@@ -51,6 +79,11 @@ def test_csv_dedupe_by_key(tmp_path):
 
 
 def test_csv_sort(tmp_path):
+    """Verify csv sort.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     out = tmp_path / "sorted.csv"
     write_csv(path, list(reversed(sample_rows())))
@@ -61,6 +94,11 @@ def test_csv_sort(tmp_path):
 
 
 def test_csv_validate(tmp_path):
+    """Verify csv validate.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     write_csv(path, sample_rows())
     result = validate_csv(path, ["customer", "status"])
@@ -69,6 +107,11 @@ def test_csv_validate(tmp_path):
 
 
 def test_csv_summarize(tmp_path):
+    """Verify csv summarize.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "data.csv"
     write_csv(path, sample_rows())
     result = summarize_csv(path, "customer", ["credit", "debit"])

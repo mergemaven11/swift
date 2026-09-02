@@ -12,6 +12,8 @@ MAX_COMPONENTS = 5000
 
 @dataclass(frozen=True)
 class Component:
+    """Represent Component."""
+
     name: str
     version: str | None = None
     component_type: str | None = None
@@ -20,11 +22,18 @@ class Component:
     source: str | None = None
 
     def to_dict(self) -> dict:
+        """Handle to dict.
+
+        Returns:
+            Function result.
+        """
         return asdict(self)
 
 
 @dataclass(frozen=True)
 class Finding:
+    """Represent Finding."""
+
     code: str
     category: str
     severity: str
@@ -32,10 +41,23 @@ class Finding:
     evidence: dict
 
     def to_dict(self) -> dict:
+        """Handle to dict.
+
+        Returns:
+            Function result.
+        """
         return asdict(self)
 
 
 def _license_name(value: object) -> str | None:
+    """Handle license name.
+
+    Args:
+        value: Function argument.
+
+    Returns:
+        Function result.
+    """
     if isinstance(value, str):
         return value
     if isinstance(value, dict):
@@ -47,6 +69,14 @@ def _license_name(value: object) -> str | None:
 
 
 def _read_json(path: Path) -> dict | None:
+    """Handle read json.
+
+    Args:
+        path: Function argument.
+
+    Returns:
+        Function result.
+    """
     try:
         if path.stat().st_size > MAX_SBOM_BYTES:
             return None
@@ -57,6 +87,15 @@ def _read_json(path: Path) -> dict | None:
 
 
 def _cyclonedx_components(payload: dict, source: str) -> list[Component]:
+    """Handle cyclonedx components.
+
+    Args:
+        payload: Function argument.
+        source: Function argument.
+
+    Returns:
+        Function result.
+    """
     result: list[Component] = []
     for item in payload.get("components", [])[:MAX_COMPONENTS]:
         if not isinstance(item, dict) or not item.get("name"):
@@ -77,6 +116,15 @@ def _cyclonedx_components(payload: dict, source: str) -> list[Component]:
 
 
 def _spdx_components(payload: dict, source: str) -> list[Component]:
+    """Handle spdx components.
+
+    Args:
+        payload: Function argument.
+        source: Function argument.
+
+    Returns:
+        Function result.
+    """
     result: list[Component] = []
     for item in payload.get("packages", [])[:MAX_COMPONENTS]:
         if not isinstance(item, dict) or not item.get("name"):

@@ -1,3 +1,5 @@
+"""Document this first-party Python module."""
+
 import json
 from pathlib import Path
 
@@ -6,6 +8,11 @@ from swift_files.intelligence import analyze_sbom
 
 
 def test_cyclonedx_components_are_normalized(tmp_path: Path):
+    """Verify cyclonedx components are normalized.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "bom.cdx.json"
     path.write_text(
         json.dumps(
@@ -38,6 +45,11 @@ def test_cyclonedx_components_are_normalized(tmp_path: Path):
 
 
 def test_spdx_packages_are_normalized(tmp_path: Path):
+    """Verify spdx packages are normalized.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "inventory.spdx.json"
     path.write_text(
         json.dumps(
@@ -70,6 +82,11 @@ def test_spdx_packages_are_normalized(tmp_path: Path):
 
 
 def test_artifact_summary_rolls_up_nested_sbom_intelligence(tmp_path: Path):
+    """Verify artifact summary rolls up nested sbom intelligence.
+
+    Args:
+        tmp_path: Function argument.
+    """
     import zipfile
 
     outer = tmp_path / "release.zip"

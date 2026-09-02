@@ -18,6 +18,8 @@ MAX_TEXT_PROBE = 1024 * 1024
 
 @dataclass(frozen=True)
 class FormatInfo:
+    """Represent FormatInfo."""
+
     format: str
     family: str
     extension: str
@@ -25,6 +27,11 @@ class FormatInfo:
     metadata: dict
 
     def to_dict(self) -> dict:
+        """Handle to dict.
+
+        Returns:
+            Function result.
+        """
         return asdict(self)
 
 
@@ -91,11 +98,28 @@ _EXTENSION_FORMATS = {
 
 
 def _read_probe(path: Path) -> bytes:
+    """Handle read probe.
+
+    Args:
+        path: Function argument.
+
+    Returns:
+        Function result.
+    """
     with path.open("rb") as handle:
         return handle.read(MAX_TEXT_PROBE)
 
 
 def _classify_json(payload: object, default: tuple[str, str]) -> tuple[str, str, dict]:
+    """Handle classify json.
+
+    Args:
+        payload: Function argument.
+        default: Function argument.
+
+    Returns:
+        Function result.
+    """
     metadata: dict = {}
     if isinstance(payload, dict):
         if "bomFormat" in payload and str(payload.get("bomFormat", "")).lower() == "cyclonedx":
@@ -115,6 +139,16 @@ def _classify_json(payload: object, default: tuple[str, str]) -> tuple[str, str,
 
 
 def _inspect_zip(path: Path, base_format: str, family: str) -> FormatInfo:
+    """Handle inspect zip.
+
+    Args:
+        path: Function argument.
+        base_format: Function argument.
+        family: Function argument.
+
+    Returns:
+        Function result.
+    """
     try:
         with zipfile.ZipFile(path) as archive:
             names = archive.namelist()
@@ -142,6 +176,14 @@ def _inspect_zip(path: Path, base_format: str, family: str) -> FormatInfo:
 
 
 def _inspect_tar(path: Path) -> FormatInfo:
+    """Handle inspect tar.
+
+    Args:
+        path: Function argument.
+
+    Returns:
+        Function result.
+    """
     try:
         with tarfile.open(path, mode="r:*") as archive:
             members = archive.getmembers()
@@ -165,6 +207,14 @@ def _inspect_tar(path: Path) -> FormatInfo:
 
 
 def inspect_format(path: str | Path) -> FormatInfo:
+    """Handle inspect format.
+
+    Args:
+        path: Function argument.
+
+    Returns:
+        Function result.
+    """
     file_path = Path(path)
     if not file_path.is_file():
         raise SwiftFilezError(f"File not found: {file_path}")
@@ -226,6 +276,11 @@ def inspect_format(path: str | Path) -> FormatInfo:
 
 
 def supported_formats() -> list[str]:
+    """Handle supported formats.
+
+    Returns:
+        Function result.
+    """
     formats = {value[0] for value in _FILENAME_FORMATS.values()}
     formats.update(value[0] for value in _EXTENSION_FORMATS.values())
     formats.update(

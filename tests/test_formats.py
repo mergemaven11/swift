@@ -1,3 +1,5 @@
+"""Document this first-party Python module."""
+
 from docx import Document
 from pypdf import PdfWriter
 
@@ -6,6 +8,11 @@ from swift_files.pdf_ops import extract_pdf, inspect_pdf
 
 
 def test_docx_inspect_and_extract(tmp_path):
+    """Verify docx inspect and extract.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "sample.docx"
     doc = Document()
     doc.core_properties.title = "Runbook"
@@ -23,6 +30,11 @@ def test_docx_inspect_and_extract(tmp_path):
 
 
 def test_pdf_inspect_and_extract(tmp_path):
+    """Verify pdf inspect and extract.
+
+    Args:
+        tmp_path: Function argument.
+    """
     path = tmp_path / "sample.pdf"
     writer = PdfWriter()
     writer.add_blank_page(width=72, height=72)

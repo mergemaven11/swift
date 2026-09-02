@@ -1,3 +1,5 @@
+"""Document this first-party Python module."""
+
 import json
 import zipfile
 from pathlib import Path
@@ -6,6 +8,11 @@ from swift_files.artifacts import inspect_artifact
 
 
 def test_recursive_inspection_finds_nested_sbom(tmp_path: Path):
+    """Verify recursive inspection finds nested sbom.
+
+    Args:
+        tmp_path: Function argument.
+    """
     inner = tmp_path / "bom.cdx.json"
     inner.write_text(
         json.dumps({"bomFormat": "CycloneDX", "specVersion": "1.6", "components": []}),
@@ -27,6 +34,11 @@ def test_recursive_inspection_finds_nested_sbom(tmp_path: Path):
 
 
 def test_recursive_inspection_finds_nested_dependency_manifest(tmp_path: Path):
+    """Verify recursive inspection finds nested dependency manifest.
+
+    Args:
+        tmp_path: Function argument.
+    """
     outer = tmp_path / "source.zip"
     with zipfile.ZipFile(outer, "w") as archive:
         archive.writestr("app/package.json", '{"name":"demo"}')
@@ -39,6 +51,11 @@ def test_recursive_inspection_finds_nested_dependency_manifest(tmp_path: Path):
 
 
 def test_recursive_inspection_respects_depth(tmp_path: Path):
+    """Verify recursive inspection respects depth.
+
+    Args:
+        tmp_path: Function argument.
+    """
     inner = tmp_path / "inner.zip"
     with zipfile.ZipFile(inner, "w") as archive:
         archive.writestr("package.json", '{"name":"nested"}')
@@ -54,6 +71,11 @@ def test_recursive_inspection_respects_depth(tmp_path: Path):
 
 
 def test_recursive_inspection_respects_child_limit(tmp_path: Path):
+    """Verify recursive inspection respects child limit.
+
+    Args:
+        tmp_path: Function argument.
+    """
     outer = tmp_path / "many.zip"
     with zipfile.ZipFile(outer, "w") as archive:
         for index in range(3):

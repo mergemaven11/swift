@@ -45,6 +45,7 @@ def formats_command(json_output: bool = typer.Option(False, "--json")):
 
 
 def main() -> None:
+    """Handle main."""
     app()
 
 

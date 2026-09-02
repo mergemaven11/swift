@@ -1,3 +1,5 @@
+"""Document this first-party Python module."""
+
 from typer.testing import CliRunner
 
 from swift_files.app import app
@@ -6,16 +8,23 @@ runner = CliRunner()
 
 
 def test_version():
+    """Verify version."""
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0 and "SwiftFilez 0.4.0" in result.stdout
 
 
 def test_doctor_json():
+    """Verify doctor json."""
     result = runner.invoke(app, ["doctor", "--json"])
     assert result.exit_code == 0 and '"ok": true' in result.stdout.lower()
 
 
 def test_manifest_verify_exit_code_on_drift(tmp_path):
+    """Verify manifest verify exit code on drift.
+
+    Args:
+        tmp_path: Function argument.
+    """
     root = tmp_path / "root"
     root.mkdir()
     (root / "a.txt").write_text("one", encoding="utf-8")

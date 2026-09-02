@@ -17,15 +17,32 @@ class Metric(Static):
     """A compact dashboard metric."""
 
     def __init__(self, value: str, label: str, *, id: str) -> None:
+        """Initialize the instance.
+
+        Args:
+            value: Function argument.
+            label: Function argument.
+            id: Function argument.
+        """
         super().__init__(id=id)
         self.value = value
         self.label = label
 
     def compose(self) -> ComposeResult:
+        """Handle compose.
+
+        Yields:
+            Values produced by the function.
+        """
         yield Label(self.value, classes="metric-value")
         yield Label(self.label, classes="metric-label")
 
     def set_value(self, value: str) -> None:
+        """Handle set value.
+
+        Args:
+            value: Function argument.
+        """
         self.value = value
         self.query_one(".metric-value", Label).update(value)
 
@@ -63,11 +80,21 @@ class SwiftFilezUI(App[None]):
     """
 
     def __init__(self, initial_path: Path = Path(".")) -> None:
+        """Initialize the instance.
+
+        Args:
+            initial_path: Function argument.
+        """
         super().__init__()
         self.initial_path = initial_path.resolve()
         self.records: dict[str, FileRecord] = {}
 
     def compose(self) -> ComposeResult:
+        """Handle compose.
+
+        Yields:
+            Values produced by the function.
+        """
         yield Header()
         with Vertical(id="shell"):
             with Vertical(id="hero"):
@@ -91,25 +118,43 @@ class SwiftFilezUI(App[None]):
         yield Footer()
 
     def on_mount(self) -> None:
+        """Handle on mount."""
         table = self.query_one("#results", DataTable)
         table.add_columns("Path", "Size", "Type", "SHA-256")
         self.scan_path(self.initial_path)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle on button pressed.
+
+        Args:
+            event: Function argument.
+        """
         if event.button.id == "scan":
             self.action_scan()
 
     def on_input_submitted(self, _event: Input.Submitted) -> None:
+        """Handle on input submitted.
+
+        Args:
+            _event: Function argument.
+        """
         self.action_scan()
 
     def action_scan(self) -> None:
+        """Handle action scan."""
         self.scan_path(Path(self.query_one("#path", Input).value).expanduser())
 
     def action_focus_path(self) -> None:
+        """Handle action focus path."""
         self.query_one("#path", Input).focus()
 
     @work(thread=True, exclusive=True, group="artifact-scan")
     def scan_path(self, path: Path) -> None:
+        """Handle scan path.
+
+        Args:
+            path: Function argument.
+        """
         self.call_from_thread(self._set_status, "Scanning…", False)
         try:
             records = scan_files(path)
@@ -119,15 +164,32 @@ class SwiftFilezUI(App[None]):
         self.call_from_thread(self._show_records, path, records)
 
     def _set_status(self, value: str, error: bool) -> None:
+        """Handle set status.
+
+        Args:
+            value: Function argument.
+            error: Function argument.
+        """
         metric = self.query_one("#scan-status", Metric)
         metric.set_value(value)
         metric.set_classes("status-error" if error else "status-ok")
 
     def _show_error(self, message: str) -> None:
+        """Handle show error.
+
+        Args:
+            message: Function argument.
+        """
         self._set_status("Failed", True)
         self.query_one("#details", Static).update(f"[bold #fb7185]Scan failed[/]\n\n{message}")
 
     def _show_records(self, path: Path, records: list[FileRecord]) -> None:
+        """Handle show records.
+
+        Args:
+            path: Function argument.
+            records: Function argument.
+        """
         table = self.query_one("#results", DataTable)
         table.clear()
         self.records = {record.path: record for record in records}
@@ -148,6 +210,11 @@ class SwiftFilezUI(App[None]):
         )
 
     def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
+        """Handle on data table row highlighted.
+
+        Args:
+            event: Function argument.
+        """
         record = self.records.get(str(event.row_key.value))
         if record is None:
             return
