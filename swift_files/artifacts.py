@@ -27,7 +27,7 @@ class ArtifactNode:
     metadata: dict = field(default_factory=dict)
     components: list[dict] = field(default_factory=list)
     findings: list[dict] = field(default_factory=list)
-    children: list["ArtifactNode"] = field(default_factory=list)
+    children: list[ArtifactNode] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
