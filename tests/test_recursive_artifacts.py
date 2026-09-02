@@ -2,6 +2,7 @@ import json
 import zipfile
 from pathlib import Path
 
+import swift_files.artifacts as artifacts
 from swift_files.artifacts import inspect_artifact
 
 
@@ -63,3 +64,17 @@ def test_recursive_inspection_respects_child_limit(tmp_path: Path):
 
     assert len(result.children) == 2
     assert "child limit reached (2)" in result.warnings
+
+
+def test_recursive_inspection_bounds_total_scanned_entries(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(artifacts, "DEFAULT_MAX_SCANNED_ENTRIES", 2)
+    outer = tmp_path / "scan-limit.zip"
+    with zipfile.ZipFile(outer, "w") as archive:
+        archive.writestr("one.txt", "1")
+        archive.writestr("two.txt", "2")
+        archive.writestr("package.json", '{"name":"too-late"}')
+
+    result = inspect_artifact(outer)
+
+    assert result.children == []
+    assert "archive scan limit reached (2)" in result.warnings

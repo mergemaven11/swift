@@ -35,8 +35,8 @@ dev = [
 ]
 
 [project.scripts]
-swf = "swift_files.app:main"
-swiftfilez = "swift_files.app:main"
+swf = "swift_files.cli:main"
+swiftfilez = "swift_files.cli:main"
 swf-artifact = "swift_files.formats_cli:main"
 
 [project.urls]

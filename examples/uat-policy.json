@@ -1,0 +1,6 @@
+{
+  "require_families": ["sbom"],
+  "require_component_versions": true,
+  "max_findings": 10,
+  "fail_on_warnings": true
+}

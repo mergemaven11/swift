@@ -15,6 +15,8 @@ from .intelligence import analyze_sbom
 DEFAULT_MAX_DEPTH = 3
 DEFAULT_MAX_CHILDREN = 100
 DEFAULT_MAX_MEMBER_BYTES = 64 * 1024 * 1024
+DEFAULT_MAX_SCANNED_ENTRIES = 1000
+DEFAULT_MAX_TOTAL_BYTES = 256 * 1024 * 1024
 
 
 @dataclass
@@ -111,19 +113,29 @@ def _inspect_extracted(
 def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
+    scanned = 0
+    total_bytes = 0
     with zipfile.ZipFile(path) as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
         for member in archive.infolist():
             if member.is_dir():
                 continue
+            scanned += 1
+            if scanned > DEFAULT_MAX_SCANNED_ENTRIES:
+                warnings.append(f"archive scan limit reached ({DEFAULT_MAX_SCANNED_ENTRIES})")
+                break
             if len(children) >= max_children:
                 warnings.append(f"child limit reached ({max_children})")
                 break
             if member.file_size > DEFAULT_MAX_MEMBER_BYTES:
                 warnings.append(f"skipped oversized member: {member.filename}")
                 continue
+            if total_bytes + member.file_size > DEFAULT_MAX_TOTAL_BYTES:
+                warnings.append(f"archive byte budget reached ({DEFAULT_MAX_TOTAL_BYTES})")
+                break
+            total_bytes += member.file_size
             target = Path(temp_dir) / _safe_member_name(member.filename)
             with archive.open(member) as source, target.open("wb") as output:
-                remaining = DEFAULT_MAX_MEMBER_BYTES + 1
+                remaining = DEFAULT_MAX_MEMBER_BYTES
                 while remaining > 0:
                     chunk = source.read(min(1024 * 1024, remaining))
                     if not chunk:
@@ -139,22 +151,32 @@ def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> 
 def _tar_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
+    scanned = 0
+    total_bytes = 0
     with tarfile.open(path, mode="r:*") as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
         for member in archive:
             if not member.isfile():
                 continue
+            scanned += 1
+            if scanned > DEFAULT_MAX_SCANNED_ENTRIES:
+                warnings.append(f"archive scan limit reached ({DEFAULT_MAX_SCANNED_ENTRIES})")
+                break
             if len(children) >= max_children:
                 warnings.append(f"child limit reached ({max_children})")
                 break
             if member.size > DEFAULT_MAX_MEMBER_BYTES:
                 warnings.append(f"skipped oversized member: {member.name}")
                 continue
+            if total_bytes + member.size > DEFAULT_MAX_TOTAL_BYTES:
+                warnings.append(f"archive byte budget reached ({DEFAULT_MAX_TOTAL_BYTES})")
+                break
+            total_bytes += member.size
             source = archive.extractfile(member)
             if source is None:
                 continue
             target = Path(temp_dir) / _safe_member_name(member.name)
             with source, target.open("wb") as output:
-                remaining = DEFAULT_MAX_MEMBER_BYTES + 1
+                remaining = DEFAULT_MAX_MEMBER_BYTES
                 while remaining > 0:
                     chunk = source.read(min(1024 * 1024, remaining))
                     if not chunk:

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">SwiftFilez recursive artifact inspection</title><desc id="desc">Terminal-style product screenshot showing Swift recursively inspecting a release archive and discovering an SBOM and dependency manifest.</desc>
+<rect width="1200" height="700" rx="28" fill="#07111f"/><rect x="35" y="35" width="1130" height="630" rx="22" fill="#0d1a2a" stroke="#233752" stroke-width="2"/>
+<rect x="35" y="35" width="1130" height="64" rx="22" fill="#112238"/><circle cx="78" cy="67" r="9" fill="#ff7b72"/><circle cx="108" cy="67" r="9" fill="#ffcf70"/><circle cx="138" cy="67" r="9" fill="#53d6c5"/><text x="600" y="74" text-anchor="middle" fill="#9fb0c6" font-family="system-ui,sans-serif" font-size="17">SwiftFilez — Artifact Intelligence</text>
+<g font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="22"><text x="76" y="145" fill="#53d6c5">$</text><text x="105" y="145" fill="#edf5ff">swf inspect release-2026.09.zip --recursive</text>
+<text x="76" y="198" fill="#7aa8ff">Artifact intelligence</text><text x="76" y="242" fill="#9fb0c6">name</text><text x="260" y="242" fill="#edf5ff">release-2026.09.zip</text><text x="76" y="278" fill="#9fb0c6">format</text><text x="260" y="278" fill="#edf5ff">zip-archive</text><text x="76" y="314" fill="#9fb0c6">sha256</text><text x="260" y="314" fill="#edf5ff">9e2a…74c1</text>
+<text x="76" y="370" fill="#53d6c5">├─</text><text x="120" y="370" fill="#edf5ff">sbom/bom.cdx.json</text><text x="650" y="370" fill="#7aa8ff">CycloneDX SBOM</text>
+<text x="120" y="408" fill="#53d6c5">├─</text><text x="164" y="408" fill="#edf5ff">requests</text><text x="360" y="408" fill="#9fb0c6">2.32.0</text><text x="520" y="408" fill="#9fb0c6">pkg:pypi/requests@2.32.0</text>
+<text x="76" y="456" fill="#53d6c5">├─</text><text x="120" y="456" fill="#edf5ff">app/package.json</text><text x="650" y="456" fill="#7aa8ff">npm manifest</text>
+<text x="76" y="504" fill="#53d6c5">└─</text><text x="120" y="504" fill="#edf5ff">provenance.json</text><text x="650" y="504" fill="#7aa8ff">SLSA / in-toto</text>
+<text x="76" y="570" fill="#9fb0c6">summary</text><text x="260" y="570" fill="#edf5ff">4 artifacts · 1 component · 0 warnings</text><text x="76" y="616" fill="#53d6c5">✓ local-first · no upload · bounded recursion</text></g>
+</svg>
