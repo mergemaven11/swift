@@ -48,7 +48,9 @@ def evaluate_policy(root: ArtifactNode, policy: dict) -> PolicyResult:
 
     required_families = set(policy.get("require_families", []))
     for family in sorted(required_families - families):
-        violations.append({"code": "required-family-missing", "message": f"required artifact family not found: {family}"})
+        violations.append(
+            {"code": "required-family-missing", "message": f"required artifact family not found: {family}"}
+        )
 
     denied_families = set(policy.get("deny_families", []))
     for family in sorted(denied_families & families):
@@ -57,7 +59,9 @@ def evaluate_policy(root: ArtifactNode, policy: dict) -> PolicyResult:
     if policy.get("require_component_versions"):
         missing = sum(1 for component in components if not component.get("version"))
         if missing:
-            violations.append({"code": "component-version-missing", "message": f"{missing} component(s) have no version"})
+            violations.append(
+                {"code": "component-version-missing", "message": f"{missing} component(s) have no version"}
+            )
 
     if policy.get("require_component_purls"):
         missing = sum(1 for component in components if not component.get("purl"))
@@ -71,7 +75,9 @@ def evaluate_policy(root: ArtifactNode, policy: dict) -> PolicyResult:
         )
 
     if policy.get("fail_on_warnings") and warnings:
-        violations.append({"code": "artifact-warnings", "message": f"artifact inspection produced {len(warnings)} warning(s)"})
+        violations.append(
+            {"code": "artifact-warnings", "message": f"artifact inspection produced {len(warnings)} warning(s)"}
+        )
 
     checks = {
         "artifacts": len(nodes),
