@@ -13,6 +13,7 @@ MAX_COMPONENTS = 5000
 @dataclass(frozen=True)
 class Component:
     """Represent Component."""
+
     name: str
     version: str | None = None
     component_type: str | None = None
@@ -32,6 +33,7 @@ class Component:
 @dataclass(frozen=True)
 class Finding:
     """Represent Finding."""
+
     code: str
     category: str
     severity: str

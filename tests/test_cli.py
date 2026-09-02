@@ -1,4 +1,5 @@
 """Document this first-party Python module."""
+
 from typer.testing import CliRunner
 
 from swift_files.app import app

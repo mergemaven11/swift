@@ -28,6 +28,7 @@ class SwiftFilezError(RuntimeError):
 @dataclass(frozen=True)
 class FileRecord:
     """Represent FileRecord."""
+
     path: str
     size: int
     modified: str

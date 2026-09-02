@@ -1,4 +1,5 @@
 """Document this first-party Python module."""
+
 import asyncio
 
 from swift_files.tui import SwiftFilezUI

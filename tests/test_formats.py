@@ -1,4 +1,5 @@
 """Document this first-party Python module."""
+
 from docx import Document
 from pypdf import PdfWriter
 

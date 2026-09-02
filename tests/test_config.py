@@ -1,4 +1,5 @@
 """Document this first-party Python module."""
+
 from swift_files.config import load_settings
 
 

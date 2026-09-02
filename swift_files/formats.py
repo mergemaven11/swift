@@ -19,6 +19,7 @@ MAX_TEXT_PROBE = 1024 * 1024
 @dataclass(frozen=True)
 class FormatInfo:
     """Represent FormatInfo."""
+
     format: str
     family: str
     extension: str

@@ -1,4 +1,5 @@
 """Document this first-party Python module."""
+
 import json
 
 import pytest

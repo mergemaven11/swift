@@ -20,6 +20,7 @@ DEFAULT_MAX_MEMBER_BYTES = 64 * 1024 * 1024
 @dataclass
 class ArtifactNode:
     """Represent ArtifactNode."""
+
     name: str
     format: str
     family: str
