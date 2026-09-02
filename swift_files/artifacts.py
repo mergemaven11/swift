@@ -108,9 +108,7 @@ def _inspect_extracted(
     return node
 
 
-def _zip_children(
-    path: Path, depth: int, max_depth: int, max_children: int
-) -> tuple[list[ArtifactNode], list[str]]:
+def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with zipfile.ZipFile(path) as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
@@ -138,9 +136,7 @@ def _zip_children(
     return children, warnings
 
 
-def _tar_children(
-    path: Path, depth: int, max_depth: int, max_children: int
-) -> tuple[list[ArtifactNode], list[str]]:
+def _tar_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with tarfile.open(path, mode="r:*") as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
