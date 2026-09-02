@@ -37,6 +37,7 @@ dev = [
 [project.scripts]
 swf = "swift_files.app:main"
 swiftfilez = "swift_files.app:main"
+swf-artifact = "swift_files.formats_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/mergemaven11/swift"
