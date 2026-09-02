@@ -147,7 +147,9 @@ def _inspect_tar(path: Path) -> FormatInfo:
             members = archive.getmembers()
             names = [member.name for member in members]
             fmt, family = "tar-archive", "archive"
-            if "manifest.json" in names and any(name.endswith("/layer.tar") or name.endswith("layer.tar") for name in names):
+            if "manifest.json" in names and any(
+                name.endswith("/layer.tar") or name.endswith("layer.tar") for name in names
+            ):
                 fmt, family = "docker-image-archive", "container-image"
             elif "oci-layout" in names and "index.json" in names:
                 fmt, family = "oci-image-layout", "container-image"
@@ -174,7 +176,11 @@ def inspect_format(path: str | Path) -> FormatInfo:
     base = named or _EXTENSION_FORMATS.get(suffix) or ("unknown", "unknown")
 
     if zipfile.is_zipfile(file_path):
-        return _inspect_zip(file_path, base[0] if base[0] != "unknown" else "zip-archive", base[1] if base[1] != "unknown" else "archive")
+        return _inspect_zip(
+            file_path,
+            base[0] if base[0] != "unknown" else "zip-archive",
+            base[1] if base[1] != "unknown" else "archive",
+        )
     if tarfile.is_tarfile(file_path):
         return _inspect_tar(file_path)
 
