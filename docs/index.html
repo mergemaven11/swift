@@ -3,74 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SwiftFilez customer documentation: install, inspect artifacts, analyze SBOMs, understand recursive findings, automate CI, and use Swift safely." />
+  <meta name="description" content="SwiftFilez customer documentation: install, inspect artifacts, analyze SBOMs, enforce release policy, automate CI, and use Swift safely." />
   <title>SwiftFilez Docs | Artifact Intelligence Help Center</title>
   <link rel="stylesheet" href="./docs.css" />
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="SwiftFilez docs home">
-      <span class="brand-mark">S</span>
-      <span><strong>SwiftFilez</strong><small>Help Center</small></span>
-    </a>
-    <nav>
-      <a href="#start">Start here</a>
-      <a href="#artifact-intelligence">Artifact intelligence</a>
-      <a href="#ci">CI/CD</a>
-      <a href="#safety">Safety</a>
-      <a href="https://github.com/mergemaven11/swift">GitHub</a>
-    </nav>
+    <a class="brand" href="#top" aria-label="SwiftFilez docs home"><span class="brand-mark">S</span><span><strong>SwiftFilez</strong><small>Help Center</small></span></a>
+    <nav><a href="#start">Start here</a><a href="#tour">See Swift</a><a href="#artifact-intelligence">Artifact intelligence</a><a href="#policy">Policy</a><a href="#ci">CI/CD</a><a href="https://github.com/mergemaven11/swift">GitHub</a></nav>
   </header>
 
   <main id="top">
     <section class="hero">
-      <span class="eyebrow">SWIFTFILEZ DOCUMENTATION</span>
+      <span class="eyebrow">SWIFTFILEZ DOCUMENTATION · UAT BETA</span>
       <h1>Understand an artifact before you trust it.</h1>
-      <p class="hero-copy">SwiftFilez is a local-first CLI for inspecting files and software artifacts, verifying integrity, finding nested packages and metadata, and producing machine-readable results for platform and CI/CD workflows.</p>
-      <div class="search-wrap">
-        <label for="docs-search">Search the docs</label>
-        <input id="docs-search" type="search" placeholder="Try “SBOM”, “recursive”, “Docker”, or “CI”" autocomplete="off" />
-        <span id="search-status" aria-live="polite"></span>
-      </div>
-      <div class="hero-actions">
-        <a class="button primary" href="#quickstart">Install & run Swift</a>
-        <a class="button" href="#examples">See real examples</a>
-      </div>
+      <p class="hero-copy">SwiftFilez is a local-first CLI for inspecting software artifacts, finding nested packages and SBOMs, verifying integrity, and enforcing release policy without requiring a paid cloud service.</p>
+      <div class="search-wrap"><label for="docs-search">Search the docs</label><input id="docs-search" type="search" placeholder="Try “SBOM”, “policy”, “Docker”, or “CI”" autocomplete="off" /><span id="search-status" aria-live="polite"></span></div>
+      <div class="hero-actions"><a class="button primary" href="#quickstart">Install & run Swift</a><a class="button" href="#tour">See what it looks like</a></div>
     </section>
 
     <section class="journey" aria-label="Swift workflow">
       <article><span>1</span><strong>Inspect</strong><p>Identify the artifact, metadata, size, and hash.</p></article>
       <article><span>2</span><strong>Understand</strong><p>Discover nested packages, SBOMs, provenance, and manifests.</p></article>
-      <article><span>3</span><strong>Verify</strong><p>Check integrity and surface quality or policy findings.</p></article>
+      <article><span>3</span><strong>Enforce</strong><p>Apply deterministic local release policies.</p></article>
       <article><span>4</span><strong>Automate</strong><p>Use JSON output and exit codes inside CI/CD.</p></article>
+    </section>
+
+    <section class="visual-tour searchable" id="tour" data-search="pictures screenshots product tour terminal recursive inspection policy UAT readiness">
+      <div class="visual-tour-head"><span>PRODUCT TOUR</span><h2>See SwiftFilez in action.</h2><p>These product visuals show the actual UAT command surface and the kind of artifact intelligence Swift returns. No mystery black box—everything starts from a local CLI command.</p></div>
+      <div class="visual-grid">
+        <figure class="visual-card"><img src="./assets/recursive-inspection.svg" alt="SwiftFilez recursively inspecting a release archive and finding an SBOM, package manifest, and provenance file" loading="lazy" /><figcaption><strong>Recursive artifact inspection</strong>One command maps the interesting software artifacts inside a release bundle while keeping recursion bounded.</figcaption></figure>
+        <figure class="visual-card"><img src="./assets/policy-gate.svg" alt="SwiftFilez release policy check showing all acceptance rules passing" loading="lazy" /><figcaption><strong>Local release policy</strong>Gate releases on SBOM presence and component quality with CI-friendly pass/fail behavior.</figcaption></figure>
+        <figure class="visual-card"><img src="./assets/uat-readiness.svg" alt="SwiftFilez readiness command showing the beta acceptance scope as UAT ready" loading="lazy" /><figcaption><strong>UAT readiness</strong>The beta acceptance scope covers offline inspection, recursion, SBOM normalization, policy enforcement, JSON automation, and release CI.</figcaption></figure>
+      </div>
     </section>
 
     <section class="docs-grid">
       <aside class="sidebar" aria-label="Documentation navigation">
-        <strong>On this page</strong>
-        <a href="#start">What Swift is</a>
-        <a href="#quickstart">Quick start</a>
-        <a href="#inspect">Inspect a file</a>
-        <a href="#artifact-intelligence">Recursive intelligence</a>
-        <a href="#sbom">SBOM intelligence</a>
-        <a href="#formats">Supported formats</a>
-        <a href="#examples">Real-world examples</a>
-        <a href="#ci">CI/CD usage</a>
-        <a href="#json">JSON output</a>
-        <a href="#safety">Safety model</a>
-        <a href="#troubleshooting">Troubleshooting</a>
-        <a href="#roadmap">What comes next</a>
+        <strong>On this page</strong><a href="#start">What Swift is</a><a href="#quickstart">Quick start</a><a href="#inspect">Inspect a file</a><a href="#artifact-intelligence">Recursive intelligence</a><a href="#sbom">SBOM intelligence</a><a href="#policy">Policy gates</a><a href="#formats">Supported formats</a><a href="#examples">Real-world examples</a><a href="#ci">CI/CD usage</a><a href="#json">JSON output</a><a href="#safety">Safety model</a><a href="#troubleshooting">Troubleshooting</a><a href="#roadmap">What comes next</a>
       </aside>
 
       <div class="content">
         <section class="doc-section searchable" id="start" data-search="start what is swift local first artifact intelligence file cli platform engineering devsecops">
           <div class="section-heading"><span>START HERE</span><h2>What SwiftFilez actually does</h2></div>
-          <p>SwiftFilez helps you answer a practical question: <strong>“What is this file or release artifact, what is inside it, and can I reason about it safely?”</strong></p>
-          <p>It combines normal file operations with artifact-aware inspection. That means the same tool can calculate a SHA-256 digest, identify a Python wheel, recognize a Docker or OCI archive, discover a CycloneDX or SPDX SBOM, and produce structured output for automation.</p>
-          <div class="callout"><strong>Local-first by design.</strong> Core artifact inspection does not require an account, API key, SaaS subscription, or network connection.</div>
+          <p>SwiftFilez helps you answer a practical question: <strong>“What is this release artifact, what is inside it, and does it meet the rules I expect before I promote it?”</strong></p>
+          <p>It combines normal file operations with software-artifact intelligence. The same tool can calculate SHA-256 identity, recognize packages and container archives, discover CycloneDX or SPDX SBOMs, normalize component data, and enforce deterministic acceptance policy.</p>
+          <div class="callout"><strong>Local-first by design.</strong> Core inspection and policy evaluation do not require an account, API key, SaaS subscription, or network connection.</div>
         </section>
 
-        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart python pip clone doctor ui">
+        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart python pip clone doctor">
           <div class="section-heading"><span>QUICK START</span><h2>Install SwiftFilez</h2></div>
           <p>Swift currently installs from the repository. Python 3.10 or newer is supported.</p>
           <pre><code>git clone https://github.com/mergemaven11/swift.git
@@ -85,149 +66,102 @@ source .venv/bin/activate
 
 python -m pip install -e .
 swf --version
-swf doctor</code></pre>
-          <p><code>swf doctor</code> is the fastest way to confirm that the local environment is healthy before using Swift in a script or pipeline.</p>
+swf doctor
+swf readiness</code></pre>
+          <p><code>swf doctor</code> checks the local environment. <code>swf readiness</code> shows which beta acceptance capabilities are present in the installed build.</p>
         </section>
 
-        <section class="doc-section searchable" id="inspect" data-search="inspect hash metadata sha256 mime file basic command">
-          <div class="section-heading"><span>FILE INSPECTION</span><h2>Inspect a normal file</h2></div>
-          <p>Use the main CLI when you want file metadata and integrity information.</p>
+        <section class="doc-section searchable" id="inspect" data-search="inspect hash metadata sha256 file basic command">
+          <div class="section-heading"><span>FILE INSPECTION</span><h2>Inspect a file or software artifact</h2></div>
           <pre><code>swf inspect ./release/app.bin
+swf inspect ./release/package.json --json
 swf hash ./release/app.bin
 swf scan ./release --json</code></pre>
-          <p>This is useful before upload, before deployment, when comparing artifacts between environments, or when you need a deterministic hash for an audit trail.</p>
+          <p>Normal inspection returns file identity plus artifact format information when Swift recognizes the file as a software-oriented artifact.</p>
         </section>
 
         <section class="doc-section searchable" id="artifact-intelligence" data-search="recursive nested archive artifact intelligence zip tar docker image package sbom provenance">
           <div class="section-heading"><span>ARTIFACT INTELLIGENCE</span><h2>Look inside complex artifacts</h2></div>
-          <p>The artifact command recognizes software-oriented formats and can recursively inspect interesting nested content without sending the artifact anywhere.</p>
-          <pre><code>swf-artifact inspect release.zip
-swf-artifact inspect release.zip --recursive
-swf-artifact inspect image.tar -r --json
-swf-artifact inspect bundle.zip -r --max-depth 5</code></pre>
-          <p>Recursive inspection can surface nested archives, dependency manifests, SBOMs, provenance documents, package formats, and container metadata. Each inspected artifact receives a SHA-256 identity so a result can be tied back to the exact bytes that were analyzed.</p>
-          <div class="diagram">
-            <code>release.zip</code>
-            <span>↳ app.whl</span>
-            <span>↳ bom.cdx.json</span>
-            <span>↳ provenance.json</span>
-            <span>↳ package.json</span>
-          </div>
+          <p>Recursive inspection discovers interesting nested artifacts without blindly unpacking an archive into your working directory.</p>
+          <pre><code>swf inspect release.zip --recursive
+swf inspect image.tar -r --json
+swf inspect bundle.zip -r --max-depth 5 --max-children 200</code></pre>
+          <p>Swift can surface nested archives, dependency manifests, SBOMs, provenance documents, package formats, and container metadata. Every inspected artifact receives SHA-256 identity.</p>
+          <div class="diagram"><code>release.zip</code><span>↳ app.whl</span><span>↳ bom.cdx.json</span><span>↳ provenance.json</span><span>↳ package.json</span></div>
         </section>
 
         <section class="doc-section searchable" id="sbom" data-search="sbom cyclonedx spdx components packages purl license findings quality">
-          <div class="section-heading"><span>SBOM INTELLIGENCE</span><h2>Turn SBOM files into normalized findings</h2></div>
-          <p>Swift recognizes CycloneDX and SPDX SBOMs and normalizes package/component information into a common model. That makes later policy checks possible without requiring every downstream tool to understand every SBOM flavor.</p>
-          <ul>
-            <li><strong>Name and version</strong> — identify the component being described.</li>
-            <li><strong>Type</strong> — preserve package/component type when available.</li>
-            <li><strong>PURL</strong> — retain package URLs used to correlate software identities.</li>
-            <li><strong>License</strong> — capture license information when the SBOM provides it.</li>
-            <li><strong>Quality findings</strong> — flag useful gaps such as missing versions or PURLs.</li>
-          </ul>
-          <p>Swift does not claim that “an SBOM exists” means “the software is secure.” An SBOM is evidence about contents; policy and vulnerability interpretation are separate concerns.</p>
+          <div class="section-heading"><span>SBOM INTELLIGENCE</span><h2>Turn SBOM files into normalized evidence</h2></div>
+          <p>Swift recognizes CycloneDX and SPDX SBOMs and normalizes package/component information into a common model for inspection and policy.</p>
+          <ul><li><strong>Name and version</strong> — identify the component being described.</li><li><strong>Type</strong> — preserve package/component type when available.</li><li><strong>PURL</strong> — retain package URLs used to correlate software identities.</li><li><strong>License</strong> — capture license information when supplied.</li><li><strong>Quality findings</strong> — surface useful gaps such as missing versions or PURLs.</li></ul>
+          <p>An SBOM is evidence about software contents; its existence alone does not mean an artifact is secure.</p>
+        </section>
+
+        <section class="doc-section searchable" id="policy" data-search="policy gate release acceptance require sbom purl version exit code pass fail json">
+          <div class="section-heading"><span>POLICY GATES</span><h2>Turn artifact evidence into an acceptance decision</h2></div>
+          <p>Swift's beta policy engine is deliberately small and deterministic. Policies are local JSON files, so a team can version them beside application or platform code.</p>
+          <pre><code>swf policy check release.zip --policy examples/uat-policy.json
+swf policy check release.zip --policy release-policy.json --json</code></pre>
+          <p>A compliant artifact exits with code <code>0</code>. A policy rejection exits with code <code>2</code>, making it straightforward to stop a CI promotion without confusing a rejected release with a broken Swift installation.</p>
+          <div class="callout"><strong>Example controls:</strong> require an SBOM family, require component versions, require package URLs, deny artifact families, or cap findings/warnings.</div>
         </section>
 
         <section class="doc-section searchable" id="formats" data-search="supported formats docker oci wheel apk ipa jar war nuget terraform json yaml toml xml elf pe macho wasm sbom">
           <div class="section-heading"><span>FORMAT COVERAGE</span><h2>Formats Swift understands today</h2></div>
-          <p>Use <code>swf-artifact formats</code> to list the registry available in your installed version. Current coverage includes:</p>
-          <div class="cards">
-            <article><strong>Supply chain</strong><p>CycloneDX, SPDX, in-toto/SLSA-style provenance, SARIF.</p></article>
-            <article><strong>Containers</strong><p>Docker image archives, OCI image layouts, TAR/ZIP/GZIP containers.</p></article>
-            <article><strong>Packages</strong><p>Wheel/Egg, JAR/WAR, NuGet, APK, IPA, Debian/RPM families.</p></article>
-            <article><strong>Dependency files</strong><p>npm, Python, Go, Cargo, Bundler, Composer, Maven and common lockfiles.</p></article>
-            <article><strong>Infrastructure</strong><p>Terraform, Dockerfile, Compose, JSON, YAML, TOML, XML, INI and dotenv.</p></article>
-            <article><strong>Binaries</strong><p>ELF, PE, Mach-O and WebAssembly magic-byte recognition.</p></article>
-          </div>
+          <p>Run <code>swf formats</code> to list the registry in your installed version.</p>
+          <div class="cards"><article><strong>Supply chain</strong><p>CycloneDX, SPDX, in-toto/SLSA-style provenance, SARIF.</p></article><article><strong>Containers</strong><p>Docker image archives, OCI image layouts, TAR/ZIP/GZIP containers.</p></article><article><strong>Packages</strong><p>Wheel/Egg, JAR/WAR, NuGet, APK, IPA, Debian/RPM families.</p></article><article><strong>Dependency files</strong><p>npm, Python, Go, Cargo, Bundler, Composer, Maven and common lockfiles.</p></article><article><strong>Infrastructure</strong><p>Terraform, Dockerfile, Compose, JSON, YAML, TOML, XML, INI and dotenv.</p></article><article><strong>Binaries</strong><p>ELF, PE, Mach-O and WebAssembly magic-byte recognition.</p></article></div>
         </section>
 
         <section class="doc-section searchable" id="examples" data-search="examples platform engineer release engineer devsecops incident ci docker supply chain">
           <div class="section-heading"><span>REAL-WORLD EXAMPLES</span><h2>Where Swift helps</h2></div>
-          <div class="story">
-            <span>PLATFORM ENGINEER</span>
-            <h3>A release arrives as one ZIP file.</h3>
-            <p>You do not want to manually unzip it, inspect every nested package, open an SBOM, and then build a separate inventory.</p>
-            <pre><code>swf-artifact inspect release-2026.09.zip --recursive --json</code></pre>
-            <p>Swift identifies the outer archive, hashes it, discovers interesting nested artifacts, normalizes SBOM content, and gives the pipeline one machine-readable result.</p>
-          </div>
-          <div class="story">
-            <span>RELEASE ENGINEER</span>
-            <h3>You need to prove a deployment artifact did not drift.</h3>
-            <pre><code>swf manifest build ./dist --output manifest.json
-swf manifest verify ./dist manifest.json</code></pre>
-            <p>The manifest becomes an integrity contract for the release directory. Changed, missing, or unexpected files can be detected before promotion.</p>
-          </div>
-          <div class="story">
-            <span>DEVSECOPS</span>
-            <h3>You receive an OCI/Docker archive with an SBOM.</h3>
-            <p>Swift can recognize the container artifact and related SBOM/provenance material locally. Future policy layers can build on the same normalized result rather than reimplementing parsing for each artifact type.</p>
-          </div>
+          <div class="story"><span>PLATFORM ENGINEER</span><h3>A release arrives as one ZIP file.</h3><p>Instead of manually unpacking it and opening every metadata file:</p><pre><code>swf inspect release-2026.09.zip --recursive --json</code></pre><p>Swift creates one machine-readable view of the interesting nested artifacts and normalized SBOM evidence.</p></div>
+          <div class="story"><span>RELEASE ENGINEER</span><h3>You need to prove a deployment artifact did not drift.</h3><pre><code>swf manifest build ./dist --output manifest.json
+swf manifest verify ./dist manifest.json</code></pre><p>The manifest acts as an integrity contract for the release directory.</p></div>
+          <div class="story"><span>DEVSECOPS</span><h3>You need a release gate that does not depend on another SaaS account.</h3><pre><code>swf policy check release.tar --policy release-policy.json</code></pre><p>Swift inspects locally, evaluates locally, and returns a CI-friendly acceptance decision.</p></div>
         </section>
 
         <section class="doc-section searchable" id="ci" data-search="ci cd github actions automation pipeline exit code json gate deployment release">
           <div class="section-heading"><span>CI/CD</span><h2>Use Swift as a pipeline primitive</h2></div>
-          <p>Human-readable output is useful at a terminal. Automation needs stable JSON and meaningful exit codes. Swift supports both patterns.</p>
-          <pre><code># Example CI step
-swf doctor --json
-swf scan ./dist --json
-swf-artifact inspect ./dist/release.tar --recursive --json</code></pre>
-          <p>A useful pattern is to save JSON output as a build artifact, feed it into a later policy step, and keep the SHA-256 identity alongside the release being promoted.</p>
+          <pre><code>swf doctor --json
+swf inspect ./dist/release.tar --recursive --json
+swf policy check ./dist/release.tar --policy release-policy.json --json</code></pre>
+          <p>Save JSON inspection output as a build artifact, keep its SHA-256 identity alongside the release, and use the policy command as a promotion gate.</p>
         </section>
 
         <section class="doc-section searchable" id="json" data-search="json output scripting jq machine readable automation schema">
           <div class="section-heading"><span>AUTOMATION OUTPUT</span><h2>Prefer JSON when another tool is reading Swift</h2></div>
-          <pre><code>swf-artifact inspect app.whl --json
-swf-artifact inspect release.zip --recursive --json</code></pre>
-          <p>JSON is intended for scripts, CI jobs, artifact reports, and future integrations. Human-friendly rendering may change visually over time; machine-readable fields should be treated as the integration surface.</p>
+          <pre><code>swf inspect app.whl --json
+swf inspect release.zip --recursive --json
+swf readiness --json</code></pre>
+          <p>Human-friendly rendering can evolve visually. JSON is the intended integration surface for scripts, CI jobs, and artifact reports.</p>
         </section>
 
         <section class="doc-section searchable" id="safety" data-search="safety security local archive zip bomb extraction limits depth children member bytes network privacy">
           <div class="section-heading"><span>SAFETY MODEL</span><h2>Swift treats artifacts as untrusted input</h2></div>
-          <p>Archives can be hostile even when they look ordinary. Swift's recursive analysis uses explicit boundaries rather than blindly extracting everything.</p>
-          <ul>
-            <li>Recursive depth is bounded and configurable.</li>
-            <li>The number of interesting child artifacts is bounded.</li>
-            <li>Archive members above the configured safety ceiling are skipped.</li>
-            <li>Temporary inspection avoids writing archive paths directly into your working tree.</li>
-            <li>Core inspection remains local and does not upload artifacts to a remote service.</li>
-          </ul>
-          <div class="callout warn"><strong>Important:</strong> format recognition is not malware scanning. Do not execute an untrusted artifact simply because Swift successfully identified it.</div>
+          <p>Recursive analysis uses explicit boundaries instead of unrestricted extraction.</p>
+          <ul><li>Recursive depth and interesting-child counts are bounded.</li><li>Per-member size, scanned-entry count, and total-byte budgets limit archive work.</li><li>Temporary inspection avoids writing archive paths directly into the working tree.</li><li>Core inspection and policy evaluation remain local.</li></ul>
+          <div class="callout warn"><strong>Important:</strong> format recognition is not malware scanning. Do not execute an untrusted artifact simply because Swift identified it.</div>
         </section>
 
-        <section class="doc-section searchable" id="troubleshooting" data-search="troubleshooting command not found swf-artifact install doctor python environment error">
+        <section class="doc-section searchable" id="troubleshooting" data-search="troubleshooting command not found install doctor python environment error policy">
           <div class="section-heading"><span>TROUBLESHOOTING</span><h2>Common problems</h2></div>
           <details><summary><code>swf: command not found</code></summary><p>Activate the virtual environment where Swift was installed, then run <code>python -m pip install -e .</code> again from the repository root.</p></details>
-          <details><summary><code>swf-artifact: command not found</code></summary><p>Make sure you are on a version containing the artifact registry and reinstall the package so the new console entry point is registered.</p></details>
-          <details><summary>An archive shows fewer children than expected</summary><p>Recursive inspection intentionally keeps only artifact-relevant children and applies depth, count, and size safety limits. Increase <code>--max-depth</code> or <code>--max-children</code> deliberately when needed.</p></details>
-          <details><summary>I need to know whether my environment is healthy</summary><p>Run <code>swf doctor --json</code>. It is designed as a quick local/CI diagnostic.</p></details>
+          <details><summary>An archive shows fewer children than expected</summary><p>Recursive inspection intentionally retains artifact-relevant children and applies safety limits. Increase <code>--max-depth</code> or <code>--max-children</code> deliberately when needed.</p></details>
+          <details><summary>My policy command exits with 2</summary><p>That means Swift ran successfully but the artifact did not meet the policy. Read the returned violations to see which acceptance rule failed.</p></details>
+          <details><summary>I need to know whether this build is UAT-capable</summary><p>Run <code>swf readiness --json</code> and follow the scenarios in <code>docs/UAT.md</code>.</p></details>
         </section>
 
         <section class="doc-section searchable" id="roadmap" data-search="roadmap future policy opa rego sigstore cosign plugins s3 gcs azure opentelemetry">
-          <div class="section-heading"><span>ROADMAP</span><h2>Where artifact intelligence goes next</h2></div>
-          <p>The goal is not to turn Swift into a paid cloud service. The core stays useful offline, while optional integrations can extend it.</p>
-          <ul>
-            <li>Signed artifact and manifest verification with Sigstore/Cosign-compatible workflows.</li>
-            <li>OPA/Rego policy evaluation over normalized artifact findings.</li>
-            <li>Plugin discovery for additional package and metadata formats.</li>
-            <li>Optional S3, GCS, and Azure Blob adapters.</li>
-            <li>OpenTelemetry instrumentation with local/console-friendly defaults.</li>
-          </ul>
+          <div class="section-heading"><span>AFTER UAT</span><h2>What comes after the beta acceptance scope</h2></div>
+          <p>UAT has a fixed scope so the finish line does not move forever. These are enhancements, not blockers for the current beta:</p>
+          <ul><li>Signed artifact and manifest verification with Sigstore/Cosign-compatible workflows.</li><li>Optional OPA/Rego evaluation for organizations already using OPA.</li><li>Plugin discovery for additional artifact analyzers.</li><li>Optional S3, GCS, and Azure Blob inputs.</li><li>OpenTelemetry instrumentation with local/console-friendly defaults.</li></ul>
         </section>
 
-        <section class="support">
-          <span>NEED MORE HELP?</span>
-          <h2>Start with the repository.</h2>
-          <p>Open an issue with the command you ran, your Swift version, the artifact family you expected, and sanitized output from <code>swf doctor --json</code>. Never post secrets, access tokens, private keys, proprietary artifacts, or confidential SBOM data in a public issue.</p>
-          <a class="button primary" href="https://github.com/mergemaven11/swift/issues">Open GitHub Issues</a>
-        </section>
+        <section class="support"><span>UAT FEEDBACK</span><h2>Try to break it.</h2><p>During UAT, test real release artifacts and sanitized fixtures. Report the command, Swift version, expected behavior, actual behavior, and sanitized <code>swf doctor --json</code> output. Never post secrets, private keys, proprietary artifacts, or confidential SBOM data publicly.</p><a class="button primary" href="https://github.com/mergemaven11/swift/issues">Open GitHub Issues</a></section>
       </div>
     </section>
   </main>
-
-  <footer>
-    <strong>SwiftFilez</strong>
-    <span>Local-first artifact intelligence for humans, scripts, and CI.</span>
-  </footer>
+  <footer><strong>SwiftFilez</strong><span>Local-first artifact intelligence for humans, scripts, and CI.</span></footer>
   <script src="./docs.js"></script>
 </body>
 </html>
