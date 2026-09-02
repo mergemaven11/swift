@@ -11,7 +11,11 @@ from .artifacts import DEFAULT_MAX_CHILDREN, DEFAULT_MAX_DEPTH, inspect_artifact
 from .config import load_settings
 from .core import SwiftFilezError, inspect_file
 from .formats import inspect_format, supported_formats
+from .policy import evaluate_policy, load_policy
 from .ui import emit_json, human_bytes, render_mapping
+
+policy_app = typer.Typer(help="Evaluate local artifact acceptance policies.")
+app.add_typer(policy_app, name="policy")
 
 
 @app.command("inspect")
@@ -59,20 +63,41 @@ def formats_command(json_output: bool = typer.Option(False, "--json")):
         render_mapping("Supported artifact formats", {"formats": payload, "count": len(payload)})
 
 
+@policy_app.command("check")
+def policy_check(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    policy: Path = typer.Option(..., "--policy", "-p", exists=True, file_okay=True, dir_okay=False, readable=True),
+    max_depth: int = typer.Option(DEFAULT_MAX_DEPTH, "--max-depth", min=0, max=10),
+    max_children: int = typer.Option(DEFAULT_MAX_CHILDREN, "--max-children", min=1, max=1000),
+    json_output: bool = typer.Option(False, "--json"),
+):
+    """Gate an artifact with a deterministic JSON policy; exit 2 on rejection."""
+    try:
+        artifact = inspect_artifact(path, max_depth=max_depth, max_children=max_children)
+        result = evaluate_policy(artifact, load_policy(policy)).to_dict()
+    except (SwiftFilezError, OSError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    emit_json(result) if json_output else render_mapping("Policy result", result)
+    if not result["ok"]:
+        raise typer.Exit(code=2)
+
+
 @app.command("readiness")
 def readiness_command(json_output: bool = typer.Option(False, "--json")):
-    """Show local UAT-readiness checks for the installed Swift build."""
+    """Show the acceptance-test readiness of the installed Swift build."""
     settings = load_settings()
     payload = {
-        "uat_ready": True,
+        "uat_candidate": True,
+        "uat_ready": False,
         "core_offline": True,
         "artifact_inspection": True,
         "recursive_inspection": True,
         "sbom_normalization": True,
-        "policy_enforcement": False,
+        "policy_enforcement": True,
         "signature_verification": False,
         "hash_algorithm": settings.hash_algorithm,
-        "note": "UAT-ready means the build is suitable for acceptance testing; policy and signature features remain roadmap items.",
+        "note": "Candidate becomes UAT-ready after the acceptance suite and release CI pass.",
     }
     emit_json(payload) if json_output else render_mapping("UAT readiness", payload)
 
