@@ -10,6 +10,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from .formats import FormatInfo, inspect_format
+from .intelligence import analyze_sbom
 
 DEFAULT_MAX_DEPTH = 3
 DEFAULT_MAX_CHILDREN = 100
@@ -24,11 +25,42 @@ class ArtifactNode:
     size: int
     sha256: str
     metadata: dict = field(default_factory=dict)
+    components: list[dict] = field(default_factory=list)
+    findings: list[dict] = field(default_factory=list)
     children: list["ArtifactNode"] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        payload = asdict(self)
+        payload["summary"] = _summarize(self)
+        return payload
+
+
+def _summarize(node: ArtifactNode) -> dict:
+    nodes = 1
+    components = len(node.components)
+    findings = len(node.findings)
+    severities: dict[str, int] = {}
+    families: dict[str, int] = {node.family: 1}
+    for finding in node.findings:
+        severity = str(finding.get("severity", "unknown"))
+        severities[severity] = severities.get(severity, 0) + 1
+    for child in node.children:
+        summary = _summarize(child)
+        nodes += summary["artifacts"]
+        components += summary["components"]
+        findings += summary["findings"]
+        for severity, count in summary["findings_by_severity"].items():
+            severities[severity] = severities.get(severity, 0) + count
+        for family, count in summary["families"].items():
+            families[family] = families.get(family, 0) + count
+    return {
+        "artifacts": nodes,
+        "components": components,
+        "findings": findings,
+        "findings_by_severity": severities,
+        "families": families,
+    }
 
 
 def _sha256(path: Path) -> str:
@@ -141,6 +173,7 @@ def _tar_children(
 
 def _inspect_node(path: Path, depth: int, max_depth: int, max_children: int) -> ArtifactNode:
     info = inspect_format(path)
+    components, findings = analyze_sbom(path, info.format)
     node = ArtifactNode(
         name=path.name,
         format=info.format,
@@ -148,6 +181,8 @@ def _inspect_node(path: Path, depth: int, max_depth: int, max_children: int) -> 
         size=path.stat().st_size,
         sha256=_sha256(path),
         metadata=info.metadata,
+        components=[component.to_dict() for component in components],
+        findings=[finding.to_dict() for finding in findings],
     )
     if depth >= max_depth or not info.container:
         return node
