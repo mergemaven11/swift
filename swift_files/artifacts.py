@@ -19,6 +19,7 @@ DEFAULT_MAX_MEMBER_BYTES = 64 * 1024 * 1024
 
 @dataclass
 class ArtifactNode:
+    """Represent ArtifactNode."""
     name: str
     format: str
     family: str
@@ -31,12 +32,25 @@ class ArtifactNode:
     warnings: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
+        """Handle to dict.
+
+        Returns:
+            Function result.
+        """
         payload = asdict(self)
         payload["summary"] = _summarize(self)
         return payload
 
 
 def _summarize(node: ArtifactNode) -> dict:
+    """Handle summarize.
+
+    Args:
+        node: Function argument.
+
+    Returns:
+        Function result.
+    """
     nodes = 1
     components = len(node.components)
     findings = len(node.findings)
@@ -64,6 +78,14 @@ def _summarize(node: ArtifactNode) -> dict:
 
 
 def _sha256(path: Path) -> str:
+    """Handle sha256.
+
+    Args:
+        path: Function argument.
+
+    Returns:
+        Function result.
+    """
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
@@ -72,6 +94,14 @@ def _sha256(path: Path) -> str:
 
 
 def _interesting(info: FormatInfo) -> bool:
+    """Handle interesting.
+
+    Args:
+        info: Function argument.
+
+    Returns:
+        Function result.
+    """
     return info.container or info.family in {
         "sbom",
         "provenance",
@@ -87,6 +117,14 @@ def _interesting(info: FormatInfo) -> bool:
 
 
 def _safe_member_name(name: str) -> str:
+    """Handle safe member name.
+
+    Args:
+        name: Function argument.
+
+    Returns:
+        Function result.
+    """
     return Path(name).name or "artifact"
 
 
@@ -97,6 +135,18 @@ def _inspect_extracted(
     max_depth: int,
     max_children: int,
 ) -> ArtifactNode | None:
+    """Handle inspect extracted.
+
+    Args:
+        path: Function argument.
+        display_name: Function argument.
+        depth: Function argument.
+        max_depth: Function argument.
+        max_children: Function argument.
+
+    Returns:
+        Function result.
+    """
     try:
         info = inspect_format(path)
     except Exception:
@@ -109,6 +159,17 @@ def _inspect_extracted(
 
 
 def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
+    """Handle zip children.
+
+    Args:
+        path: Function argument.
+        depth: Function argument.
+        max_depth: Function argument.
+        max_children: Function argument.
+
+    Returns:
+        Function result.
+    """
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with zipfile.ZipFile(path) as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
@@ -137,6 +198,17 @@ def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> 
 
 
 def _tar_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
+    """Handle tar children.
+
+    Args:
+        path: Function argument.
+        depth: Function argument.
+        max_depth: Function argument.
+        max_children: Function argument.
+
+    Returns:
+        Function result.
+    """
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with tarfile.open(path, mode="r:*") as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
@@ -168,6 +240,17 @@ def _tar_children(path: Path, depth: int, max_depth: int, max_children: int) -> 
 
 
 def _inspect_node(path: Path, depth: int, max_depth: int, max_children: int) -> ArtifactNode:
+    """Handle inspect node.
+
+    Args:
+        path: Function argument.
+        depth: Function argument.
+        max_depth: Function argument.
+        max_children: Function argument.
+
+    Returns:
+        Function result.
+    """
     info = inspect_format(path)
     components, findings = analyze_sbom(path, info.format)
     node = ArtifactNode(

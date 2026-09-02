@@ -1,3 +1,4 @@
+"""Document this first-party Python module."""
 import json
 
 import pytest
@@ -15,6 +16,11 @@ from swift_files.core import (
 
 
 def test_hash_and_inspect(tmp_path):
+    """Verify hash and inspect.
+
+    Args:
+        tmp_path: Function argument.
+    """
     file_path = tmp_path / "artifact.txt"
     file_path.write_text("platform", encoding="utf-8")
     digest = hash_file(file_path)
@@ -25,6 +31,11 @@ def test_hash_and_inspect(tmp_path):
 
 
 def test_manifest_round_trip_and_drift(tmp_path):
+    """Verify manifest round trip and drift.
+
+    Args:
+        tmp_path: Function argument.
+    """
     root = tmp_path / "root"
     root.mkdir()
     (root / "a.txt").write_text("one", encoding="utf-8")
@@ -38,6 +49,11 @@ def test_manifest_round_trip_and_drift(tmp_path):
 
 
 def test_manifest_detects_missing_and_strict_unexpected(tmp_path):
+    """Verify manifest detects missing and strict unexpected.
+
+    Args:
+        tmp_path: Function argument.
+    """
     root = tmp_path / "root"
     root.mkdir()
     (root / "a.txt").write_text("one", encoding="utf-8")
@@ -51,6 +67,11 @@ def test_manifest_detects_missing_and_strict_unexpected(tmp_path):
 
 
 def test_find_duplicates_and_dry_run(tmp_path):
+    """Verify find duplicates and dry run.
+
+    Args:
+        tmp_path: Function argument.
+    """
     (tmp_path / "a.txt").write_text("same", encoding="utf-8")
     (tmp_path / "b.txt").write_text("same", encoding="utf-8")
     (tmp_path / "c.txt").write_text("different", encoding="utf-8")
@@ -62,6 +83,11 @@ def test_find_duplicates_and_dry_run(tmp_path):
 
 
 def test_quarantine_apply(tmp_path):
+    """Verify quarantine apply.
+
+    Args:
+        tmp_path: Function argument.
+    """
     a = tmp_path / "a.txt"
     b = tmp_path / "b.txt"
     a.write_text("same", encoding="utf-8")
@@ -74,6 +100,11 @@ def test_quarantine_apply(tmp_path):
 
 
 def test_manifest_schema(tmp_path):
+    """Verify manifest schema.
+
+    Args:
+        tmp_path: Function argument.
+    """
     (tmp_path / "a.bin").write_bytes(b"abc")
     manifest = build_manifest(tmp_path)
     assert manifest["schema_version"] == 1
@@ -82,6 +113,11 @@ def test_manifest_schema(tmp_path):
 
 
 def test_manifest_rejects_paths_outside_verification_root(tmp_path):
+    """Verify manifest rejects paths outside verification root.
+
+    Args:
+        tmp_path: Function argument.
+    """
     root = tmp_path / "root"
     root.mkdir()
     outside = tmp_path / "outside.txt"

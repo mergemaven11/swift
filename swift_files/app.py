@@ -45,6 +45,11 @@ app.add_typer(manifest_app, name="manifest")
 
 
 def _fail(exc: Exception) -> None:
+    """Handle fail.
+
+    Args:
+        exc: Function argument.
+    """
     console.print(f"[bold red]Error:[/bold red] {exc}")
     raise typer.Exit(code=1) from exc
 
@@ -53,6 +58,12 @@ def _fail(exc: Exception) -> None:
 def root(
     ctx: typer.Context, version: bool = typer.Option(False, "--version", help="Show version and exit.", is_eager=True)
 ):
+    """Handle root.
+
+    Args:
+        ctx: Function argument.
+        version: Function argument.
+    """
     if version:
         typer.echo(f"SwiftFilez {__version__}")
         raise typer.Exit()
@@ -190,6 +201,12 @@ def manifest_verify(
 
 @csv_app.command("inspect")
 def csv_inspect(path: Path, json_output: bool = typer.Option(False, "--json")):
+    """Handle csv inspect.
+
+    Args:
+        path: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = csv_ops.inspect_csv(path)
     except SwiftFilezError as exc:
@@ -204,6 +221,13 @@ def csv_duplicates(
     key: list[str] | None = typer.Option(None, "--key", "-k"),
     json_output: bool = typer.Option(False, "--json"),
 ):
+    """Handle csv duplicates.
+
+    Args:
+        path: Function argument.
+        key: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = csv_ops.find_duplicate_rows(path, key)
     except SwiftFilezError as exc:
@@ -231,6 +255,15 @@ def csv_dedupe(
     keep: str = typer.Option("first", "--keep"),
     json_output: bool = typer.Option(False, "--json"),
 ):
+    """Handle csv dedupe.
+
+    Args:
+        path: Function argument.
+        output: Function argument.
+        key: Function argument.
+        keep: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = csv_ops.dedupe_csv(path, output, key, keep)
     except (SwiftFilezError, OSError) as exc:
@@ -247,6 +280,15 @@ def csv_sort(
     reverse: bool = typer.Option(False, "--reverse"),
     json_output: bool = typer.Option(False, "--json"),
 ):
+    """Handle csv sort.
+
+    Args:
+        path: Function argument.
+        column: Function argument.
+        output: Function argument.
+        reverse: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = csv_ops.sort_csv(path, output, column, reverse)
     except (SwiftFilezError, OSError) as exc:
@@ -301,6 +343,12 @@ def csv_summarize(
 
 @docx_app.command("inspect")
 def docx_inspect(path: Path, json_output: bool = typer.Option(False, "--json")):
+    """Handle docx inspect.
+
+    Args:
+        path: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = docx_ops.inspect_docx(path)
     except SwiftFilezError as exc:
@@ -311,6 +359,12 @@ def docx_inspect(path: Path, json_output: bool = typer.Option(False, "--json")):
 
 @docx_app.command("extract")
 def docx_extract(path: Path, output: Path = typer.Option(..., "--output", "-o")):
+    """Handle docx extract.
+
+    Args:
+        path: Function argument.
+        output: Function argument.
+    """
     try:
         docx_ops.extract_docx(path, output)
     except (SwiftFilezError, OSError) as exc:
@@ -321,6 +375,12 @@ def docx_extract(path: Path, output: Path = typer.Option(..., "--output", "-o"))
 
 @docx_app.command("copy")
 def docx_copy(path: Path, output: Path = typer.Option(..., "--output", "-o")):
+    """Handle docx copy.
+
+    Args:
+        path: Function argument.
+        output: Function argument.
+    """
     try:
         docx_ops.copy_docx(path, output)
     except (SwiftFilezError, OSError) as exc:
@@ -335,6 +395,13 @@ def pdf_inspect(
     password: str | None = typer.Option(None, "--password", hide_input=True),
     json_output: bool = typer.Option(False, "--json"),
 ):
+    """Handle pdf inspect.
+
+    Args:
+        path: Function argument.
+        password: Function argument.
+        json_output: Function argument.
+    """
     try:
         result = pdf_ops.inspect_pdf(path, password)
     except SwiftFilezError as exc:
@@ -349,6 +416,13 @@ def pdf_extract(
     output: Path = typer.Option(..., "--output", "-o"),
     password: str | None = typer.Option(None, "--password", hide_input=True),
 ):
+    """Handle pdf extract.
+
+    Args:
+        path: Function argument.
+        output: Function argument.
+        password: Function argument.
+    """
     try:
         pdf_ops.extract_pdf(path, output, password)
     except (SwiftFilezError, OSError) as exc:
@@ -359,6 +433,12 @@ def pdf_extract(
 
 @pdf_app.command("copy")
 def pdf_copy(path: Path, output: Path = typer.Option(..., "--output", "-o")):
+    """Handle pdf copy.
+
+    Args:
+        path: Function argument.
+        output: Function argument.
+    """
     try:
         pdf_ops.copy_pdf(path, output)
     except (SwiftFilezError, OSError) as exc:
@@ -369,6 +449,11 @@ def pdf_copy(path: Path, output: Path = typer.Option(..., "--output", "-o")):
 
 @app.command("config")
 def config_command(json_output: bool = typer.Option(False, "--json")):
+    """Handle config command.
+
+    Args:
+        json_output: Function argument.
+    """
     settings = load_settings()
     payload = {
         "hash_algorithm": settings.hash_algorithm,
@@ -385,6 +470,11 @@ def config_command(json_output: bool = typer.Option(False, "--json")):
 
 @app.command("doctor")
 def doctor_command(json_output: bool = typer.Option(False, "--json")):
+    """Handle doctor command.
+
+    Args:
+        json_output: Function argument.
+    """
     settings = load_settings()
     checks = {
         "python": {"ok": sys.version_info >= (3, 10), "value": platform.python_version()},
@@ -419,6 +509,7 @@ def ui_command(path: Path = typer.Argument(Path("."), exists=True, file_okay=Fal
 
 
 def main() -> None:
+    """Handle main."""
     app()
 
 
