@@ -22,6 +22,10 @@ jobs:
           python-version: '3.12'
       - name: Insert missing docstrings
         run: python scripts/add_missing_docstrings.py
+      - name: Format generated documentation
+        run: |
+          python -m pip install ruff
+          python -m ruff format swift_files tests main.py
       - name: Verify exhaustive coverage
         run: python scripts/check_docstrings.py
       - name: Validate syntax
@@ -35,5 +39,5 @@ jobs:
             echo "No documentation changes required."
             exit 0
           fi
-          git commit -m "docs: complete exhaustive Python docstring sweep"
+          git commit -m "docs: format exhaustive Python docstring sweep"
           git push origin HEAD:docs/google-style-docstrings
