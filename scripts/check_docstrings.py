@@ -69,7 +69,7 @@ def main() -> int:
         print(f"\nTotal missing: {len(findings)}")
         return 1
 
-    print("Docstring coverage complete: every Python module, class, and callable is documented.")
+    print("Docstring coverage complete: every first-party Python module, class, and callable is documented.")
     return 0
 
 
