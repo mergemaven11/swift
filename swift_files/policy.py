@@ -71,7 +71,10 @@ def evaluate_policy(root: ArtifactNode, policy: dict) -> PolicyResult:
     max_findings = policy.get("max_findings")
     if isinstance(max_findings, int) and len(findings) > max_findings:
         violations.append(
-            {"code": "too-many-findings", "message": f"{len(findings)} findings exceeds policy maximum of {max_findings}"}
+            {
+                "code": "too-many-findings",
+                "message": f"{len(findings)} findings exceeds policy maximum of {max_findings}",
+            }
         )
 
     if policy.get("fail_on_warnings") and warnings:
