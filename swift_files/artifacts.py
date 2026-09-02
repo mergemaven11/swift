@@ -58,7 +58,13 @@ def _safe_member_name(name: str) -> str:
     return Path(name).name or "artifact"
 
 
-def _inspect_extracted(path: Path, display_name: str, depth: int, max_depth: int, max_children: int) -> ArtifactNode | None:
+def _inspect_extracted(
+    path: Path,
+    display_name: str,
+    depth: int,
+    max_depth: int,
+    max_children: int,
+) -> ArtifactNode | None:
     try:
         info = inspect_format(path)
     except Exception:
@@ -70,7 +76,9 @@ def _inspect_extracted(path: Path, display_name: str, depth: int, max_depth: int
     return node
 
 
-def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
+def _zip_children(
+    path: Path, depth: int, max_depth: int, max_children: int
+) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with zipfile.ZipFile(path) as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
@@ -98,7 +106,9 @@ def _zip_children(path: Path, depth: int, max_depth: int, max_children: int) -> 
     return children, warnings
 
 
-def _tar_children(path: Path, depth: int, max_depth: int, max_children: int) -> tuple[list[ArtifactNode], list[str]]:
+def _tar_children(
+    path: Path, depth: int, max_depth: int, max_children: int
+) -> tuple[list[ArtifactNode], list[str]]:
     children: list[ArtifactNode] = []
     warnings: list[str] = []
     with tarfile.open(path, mode="r:*") as archive, tempfile.TemporaryDirectory(prefix="swf-") as temp_dir:
@@ -151,7 +161,12 @@ def _inspect_node(path: Path, depth: int, max_depth: int, max_children: int) -> 
     return node
 
 
-def inspect_artifact(path: str | Path, *, max_depth: int = DEFAULT_MAX_DEPTH, max_children: int = DEFAULT_MAX_CHILDREN) -> ArtifactNode:
+def inspect_artifact(
+    path: str | Path,
+    *,
+    max_depth: int = DEFAULT_MAX_DEPTH,
+    max_children: int = DEFAULT_MAX_CHILDREN,
+) -> ArtifactNode:
     """Inspect an artifact and interesting nested artifacts without network access."""
     file_path = Path(path)
     return _inspect_node(file_path, 0, max(0, max_depth), max(1, max_children))
