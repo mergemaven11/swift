@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive SwiftFilez browser demo mirroring the production artifact operations console." />
+  <title>SwiftFilez Demo | Artifact Operations Console</title>
+  <link rel="stylesheet" href="./demo.css" />
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand"><span class="brand-mark">S</span><div><strong>SwiftFilez</strong><small>Artifact Operations Console</small></div></div>
+    <div class="app-actions"><span class="status-dot"></span><span>Local-first demo</span><a href="../index.html">Docs</a><a href="https://github.com/mergemaven11/swift">GitHub</a></div>
+  </header>
+
+  <main class="shell">
+    <section class="hero-row">
+      <div>
+        <span class="eyebrow">PRODUCTION-LIKE BROWSER DEMO</span>
+        <h1>Inspect, verify, and understand artifacts.</h1>
+        <p>This demo mirrors Swift's production terminal workflow. Sample artifacts use deterministic fixture data; uploaded JSON/SBOM files are inspected locally in your browser and never uploaded.</p>
+      </div>
+      <div class="uat-badge"><span>BUILD</span><strong>UAT</strong><small>beta candidate</small></div>
+    </section>
+
+    <section class="controls panel">
+      <div class="source-tabs" role="tablist">
+        <button class="tab active" id="sample-tab" type="button">Sample artifact</button>
+        <button class="tab" id="upload-tab" type="button">Inspect local file</button>
+      </div>
+      <div id="sample-controls" class="control-row">
+        <select id="sample-select" aria-label="Select sample artifact">
+          <option value="release">release-2026.09.zip</option>
+          <option value="container">payments-api-image.tar</option>
+          <option value="sbom">bom.cdx.json</option>
+          <option value="bad">release-no-sbom.zip</option>
+        </select>
+        <button class="primary" id="inspect-sample" type="button">Inspect artifact</button>
+      </div>
+      <div id="upload-controls" class="control-row hidden">
+        <label class="file-picker"><input id="file-input" type="file" /><span>Choose JSON, SBOM, manifest, or other file</span></label>
+        <button class="primary" id="inspect-upload" type="button" disabled>Inspect local file</button>
+      </div>
+      <div class="command-line"><span>$</span><code id="command-preview">swf inspect release-2026.09.zip --recursive --json</code></div>
+    </section>
+
+    <section class="metrics">
+      <article class="metric panel"><strong id="metric-artifacts">—</strong><span>Artifacts</span></article>
+      <article class="metric panel"><strong id="metric-components">—</strong><span>Components</span></article>
+      <article class="metric panel"><strong id="metric-findings">—</strong><span>Findings</span></article>
+      <article class="metric panel"><strong id="metric-status">Ready</strong><span>Status</span></article>
+    </section>
+
+    <section class="workspace">
+      <div class="inventory panel">
+        <div class="panel-head"><div><span class="eyebrow">ARTIFACT INVENTORY</span><h2>Inspection tree</h2></div><button id="json-toggle" class="ghost" type="button">View JSON</button></div>
+        <div id="tree-view" class="tree-view"><div class="empty-state">Choose a sample artifact or local file, then run inspection.</div></div>
+        <pre id="json-view" class="json-view hidden"><code></code></pre>
+      </div>
+
+      <aside class="details panel">
+        <div class="panel-head"><div><span class="eyebrow">ARTIFACT DETAILS</span><h2>Selected item</h2></div></div>
+        <div id="details-view" class="details-view"><p class="muted">Select an artifact after inspection to view metadata, hash, format, and findings.</p></div>
+      </aside>
+    </section>
+
+    <section class="policy panel">
+      <div class="panel-head"><div><span class="eyebrow">POLICY GATE</span><h2>Acceptance policy</h2></div><span id="policy-result" class="policy-pill neutral">NOT RUN</span></div>
+      <div class="policy-grid">
+        <label><input id="require-sbom" type="checkbox" checked /> Require SBOM</label>
+        <label><input id="require-versions" type="checkbox" checked /> Require component versions</label>
+        <label><input id="require-purls" type="checkbox" checked /> Require component PURLs</label>
+        <label><input id="fail-warnings" type="checkbox" /> Fail on inspection warnings</label>
+      </div>
+      <div class="policy-footer"><button id="run-policy" class="primary" type="button" disabled>Run policy check</button><code>swf policy check artifact --policy policy.json</code></div>
+      <div id="policy-message" class="policy-message muted">Inspect an artifact first.</div>
+    </section>
+
+    <section class="truth panel">
+      <div><strong>What is real here?</strong><p>Local file hashing, filename/extension recognition, JSON parsing, CycloneDX/SPDX component normalization, and policy checks execute in-browser. No upload occurs.</p></div>
+      <div><strong>What is simulated?</strong><p>Recursive ZIP/TAR/container traversal uses deterministic production-shaped sample results because browsers do not expose Swift's Python archive engine. The actual CLI performs that work locally.</p></div>
+    </section>
+  </main>
+
+  <script src="./demo.js"></script>
+</body>
+</html>
