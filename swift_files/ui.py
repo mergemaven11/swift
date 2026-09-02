@@ -1,4 +1,4 @@
-"""Rich terminal rendering helpers."""
+"""Rich terminal rendering helpers for Swift CLI output."""
 
 from __future__ import annotations
 
@@ -11,10 +11,24 @@ console = Console()
 
 
 def emit_json(payload: object) -> None:
+    """Render a JSON-serializable payload to the terminal.
+
+    Args:
+        payload: Object to serialize. Values unsupported by the standard JSON
+            encoder are converted to strings.
+    """
     console.print_json(json.dumps(payload, default=str))
 
 
 def human_bytes(size: int) -> str:
+    """Format a byte count using binary size units.
+
+    Args:
+        size: Number of bytes to format.
+
+    Returns:
+        A human-readable size using B, KiB, MiB, GiB, or TiB.
+    """
     value = float(size)
     for unit in ("B", "KiB", "MiB", "GiB", "TiB"):
         if value < 1024 or unit == "TiB":
@@ -24,6 +38,12 @@ def human_bytes(size: int) -> str:
 
 
 def render_records(records) -> None:
+    """Render artifact inventory records as a Rich table.
+
+    Args:
+        records: Iterable of inventory records exposing ``path``, ``size``,
+            ``mime_type``, and ``hash`` attributes.
+    """
     table = Table(title="SwiftFilez inventory", show_lines=False)
     table.add_column("Path", style="bright_cyan")
     table.add_column("Size", justify="right")
@@ -35,6 +55,13 @@ def render_records(records) -> None:
 
 
 def render_mapping(title: str, payload: dict) -> None:
+    """Render a mapping as a two-column terminal table.
+
+    Args:
+        title: Table title displayed above the mapping.
+        payload: Key-value data to render. Nested mappings and lists are JSON
+            encoded for compact display.
+    """
     table = Table(title=title, show_header=False, box=None)
     table.add_column("Key", style="bright_cyan")
     table.add_column("Value")
@@ -44,8 +71,18 @@ def render_mapping(title: str, payload: dict) -> None:
 
 
 def success(message: str) -> None:
+    """Print a successful-operation message.
+
+    Args:
+        message: User-facing success text.
+    """
     console.print(f"[bold green]✓[/bold green] {message}")
 
 
 def warning(message: str) -> None:
+    """Print a warning message.
+
+    Args:
+        message: User-facing warning text.
+    """
     console.print(f"[bold yellow]![/bold yellow] {message}")
