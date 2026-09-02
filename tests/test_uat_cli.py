@@ -89,3 +89,12 @@ def test_policy_rejection_uses_ci_friendly_exit_code(tmp_path: Path):
     payload = json.loads(result.stdout)
     assert payload["ok"] is False
     assert payload["violations"][0]["code"] == "required-family-missing"
+
+
+def test_readiness_reports_beta_uat_ready():
+    result = runner.invoke(app, ["readiness", "--json"])
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert payload["uat_ready"] is True
+    assert payload["policy_enforcement"] is True
+    assert payload["core_offline"] is True
