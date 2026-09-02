@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **Proprietary software — copying prohibited.** This source is public for portfolio review and evaluation only. Copying, modification, redistribution, commercial use, rehosting, derivative works, and AI/ML training use are prohibited without prior written permission. See [LICENSE](LICENSE).
+
 <div align="center">
 
 <img src="./assets/file.gif" alt="SwiftFilez animated file operations demo" width="260" />
