@@ -89,7 +89,7 @@ def readiness_command(json_output: bool = typer.Option(False, "--json")):
     settings = load_settings()
     payload = {
         "uat_candidate": True,
-        "uat_ready": False,
+        "uat_ready": True,
         "core_offline": True,
         "artifact_inspection": True,
         "recursive_inspection": True,
@@ -97,7 +97,7 @@ def readiness_command(json_output: bool = typer.Option(False, "--json")):
         "policy_enforcement": True,
         "signature_verification": False,
         "hash_algorithm": settings.hash_algorithm,
-        "note": "Candidate becomes UAT-ready after the acceptance suite and release CI pass.",
+        "note": "UAT-ready for the documented beta acceptance scope; advanced signing and integrations remain roadmap items.",
     }
     emit_json(payload) if json_output else render_mapping("UAT readiness", payload)
 
