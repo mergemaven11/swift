@@ -84,3 +84,21 @@ jobs:
           python -m pip install --upgrade pip pip-audit
           python -m pip install .
           python -m pip_audit
+
+
+  browser-demo:
+    name: Browser CLI demo smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate browser demo JavaScript
+        run: node --check docs/docs.js
+      - name: Verify browser demo entry points
+        run: |
+          grep -q 'id="browser-lab"' docs/index.html
+          grep -q 'id="terminal-output"' docs/index.html
+          grep -q 'data-command="swf doctor"' docs/index.html
+          grep -q 'SIMULATED FILESYSTEM' docs/index.html

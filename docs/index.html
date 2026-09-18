@@ -14,6 +14,7 @@
       <span><strong>SwiftFilez</strong><small>Help Center</small></span>
     </a>
     <nav>
+      <a href="#browser-lab">Browser CLI</a>
       <a href="#start">Start here</a>
       <a href="#artifact-intelligence">Artifact intelligence</a>
       <a href="#ci">CI/CD</a>
@@ -33,8 +34,71 @@
         <span id="search-status" aria-live="polite"></span>
       </div>
       <div class="hero-actions">
-        <a class="button primary" href="#quickstart">Install & run Swift</a>
-        <a class="button" href="#examples">See real examples</a>
+        <a class="button primary" href="#browser-lab">Launch browser CLI</a>
+        <a class="button" href="#quickstart">Install locally</a>
+      </div>
+    </section>
+
+
+    <section class="browser-lab" id="browser-lab" aria-labelledby="browser-lab-title">
+      <div class="lab-heading">
+        <div>
+          <span class="eyebrow">INTERACTIVE DEMO</span>
+          <h2 id="browser-lab-title">Try SwiftFilez in your browser.</h2>
+          <p>This is a safe, stateful simulation of the real <code>swf</code> command surface against a demo filesystem. It never reads your device, uploads files, or executes arbitrary shell commands.</p>
+        </div>
+        <span class="simulation-badge">SIMULATED FILESYSTEM</span>
+      </div>
+
+      <div class="browser-workbench">
+        <aside class="demo-files" aria-label="Demo filesystem">
+          <div class="demo-files-head">
+            <span>DEMO WORKSPACE</span>
+            <strong>/workspace</strong>
+          </div>
+          <div class="file-tree" aria-label="Files available to browser CLI">
+            <span class="folder">▾ demo</span>
+            <span class="folder indent-1">▾ dist</span>
+            <span class="file indent-2">app.bin</span>
+            <span class="file indent-2">app-copy.bin</span>
+            <span class="file indent-2">release-manifest.json</span>
+            <span class="folder indent-1">▾ artifacts</span>
+            <span class="file indent-2">release-2026.09.zip</span>
+            <span class="file indent-2">image.tar</span>
+            <span class="file indent-2">bom.cdx.json</span>
+            <span class="folder indent-1">▾ data</span>
+            <span class="file indent-2">customers.csv</span>
+            <span class="folder indent-1">▾ docs</span>
+            <span class="file indent-2">runbook.docx</span>
+            <span class="file indent-2">architecture.pdf</span>
+          </div>
+          <div class="demo-note">
+            <strong>No real files are touched.</strong>
+            <span>The demo models read-only inspection plus recoverable quarantine behavior.</span>
+          </div>
+        </aside>
+
+        <div class="terminal-shell">
+          <div class="terminal-topbar">
+            <div class="terminal-lights" aria-hidden="true"><span></span><span></span><span></span></div>
+            <strong>swiftfilez browser lab</strong>
+            <span>local simulation</span>
+          </div>
+          <div id="terminal-output" class="terminal-output" role="log" aria-live="polite" aria-label="SwiftFilez browser CLI output"></div>
+          <form id="terminal-form" class="terminal-input-row" autocomplete="off">
+            <label for="terminal-input" class="terminal-prompt">demo@swiftfilez:/workspace$</label>
+            <input id="terminal-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Enter a SwiftFilez demo command" />
+          </form>
+          <div class="command-palette" aria-label="Example SwiftFilez commands">
+            <button type="button" data-command="swf doctor">doctor</button>
+            <button type="button" data-command="swf scan ./demo/dist">scan</button>
+            <button type="button" data-command="swf duplicates ./demo/dist">duplicates</button>
+            <button type="button" data-command="swf manifest verify ./demo/dist/release-manifest.json --root ./demo/dist --strict">verify</button>
+            <button type="button" data-command="swf csv inspect ./demo/data/customers.csv">csv</button>
+            <button type="button" data-command="swf-artifact inspect ./demo/artifacts/release-2026.09.zip --recursive">artifact</button>
+            <button type="button" data-command="help">help</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -48,6 +112,7 @@
     <section class="docs-grid">
       <aside class="sidebar" aria-label="Documentation navigation">
         <strong>On this page</strong>
+        <a href="#browser-lab">Browser CLI demo</a>
         <a href="#start">What Swift is</a>
         <a href="#quickstart">Quick start</a>
         <a href="#inspect">Inspect a file</a>
