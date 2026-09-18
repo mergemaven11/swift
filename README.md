@@ -8,7 +8,7 @@
 # SwiftFilez
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/14ae7178-f9a1-425c-9b30-71159f162a2b/deploy-status)](https://app.netlify.com/projects/swiftfilez-docs/deploys)
-[![Live Docs](https://img.shields.io/badge/Live-SwiftFilez_Docs-37bfa4)](https://swiftfilez-docs.netlify.app/)
+[![Browser CLI Demo](https://img.shields.io/badge/Live-Browser_CLI_Demo-37bfa4)](https://swiftfilez-docs.netlify.app/#browser-lab)
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 [![Last Commit](https://img.shields.io/github/last-commit/mergemaven11/swift)](https://github.com/mergemaven11/swift/commits/main)
@@ -28,6 +28,30 @@
 ---
 
 ![Swift files CLI UI Display](assets/swift.png)
+
+## Browser CLI demo
+
+The Netlify site is more than documentation: it includes a **safe, stateful SwiftFilez CLI simulation** that runs entirely in the browser against a demo filesystem.
+
+Try it at **https://swiftfilez-docs.netlify.app/#browser-lab**.
+
+The browser lab supports representative commands including:
+
+```bash
+swf doctor
+swf inspect ./demo/dist/app.bin --json
+swf scan ./demo/dist
+swf duplicates ./demo/dist
+swf manifest verify ./demo/dist/release-manifest.json --root ./demo/dist --strict
+swf csv inspect ./demo/data/customers.csv
+swf docx inspect ./demo/docs/runbook.docx
+swf pdf inspect ./demo/docs/architecture.pdf
+swf-artifact inspect ./demo/artifacts/release-2026.09.zip --recursive
+```
+
+The simulation does **not** execute arbitrary shell commands, read the visitor's real filesystem, or upload files. It exists to demonstrate the real CLI concepts safely in a portfolio/browser environment.
+
+---
 
 ## Why SwiftFilez exists
 
