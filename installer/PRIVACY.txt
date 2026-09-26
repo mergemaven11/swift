@@ -1,0 +1,21 @@
+SWIFTFILEZ PRIVACY & DATA NOTICE
+
+SwiftFilez is designed primarily for local file and artifact operations.
+
+LOCAL PROCESSING
+Core inspection, hashing, duplicate detection, manifest operations, document inspection, and YARA scanning operate on the machine where SwiftFilez is running.
+
+OPTIONAL AI
+AI explanations are optional. If you configure a remote OpenAI-compatible AI endpoint, SwiftFilez may send artifact metadata needed for the requested explanation to that endpoint. The remote provider's privacy policy and terms apply to data handled by that service. A local endpoint such as Ollama can be used instead.
+
+NO SAFETY GUARANTEE
+YARA and other inspection results are technical signals, not a guarantee that a file is safe, trustworthy, or malicious.
+
+FILES
+Before using file transformation or quarantine features, keep appropriate backups. Review command output and documentation before applying changes.
+
+THIRD-PARTY SOFTWARE
+Bundled or installed dependencies may have their own licenses, notices, telemetry behavior, or network behavior.
+
+Project information:
+https://github.com/mergemaven11/swift
