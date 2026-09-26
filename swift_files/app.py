@@ -15,6 +15,7 @@ from rich.table import Table
 from . import __version__, csv_ops, docx_ops, pdf_ops
 from .ai import explain_artifact
 from .editors import open_in_editor
+from .malware import scan_path as malware_scan_path
 from .config import ENV_HASH, ENV_QUARANTINE, ENV_WORKERS, load_settings
 from .core import (
     SwiftFilezError,
@@ -41,11 +42,13 @@ docx_app = typer.Typer(help="Inspect, extract, and copy DOCX files.")
 pdf_app = typer.Typer(help="Inspect, extract, and copy PDF files.")
 manifest_app = typer.Typer(help="Build and verify integrity manifests.")
 ai_app = typer.Typer(help="Optional AI-assisted explanations over local artifact metadata.")
+malware_app = typer.Typer(help="Scan files with YARA rules.")
 app.add_typer(csv_app, name="csv")
 app.add_typer(docx_app, name="docx")
 app.add_typer(pdf_app, name="pdf")
 app.add_typer(manifest_app, name="manifest")
 app.add_typer(ai_app, name="ai")
+app.add_typer(malware_app, name="malware")
 
 
 def _fail(exc: Exception) -> None:
@@ -501,6 +504,41 @@ def doctor_command(json_output: bool = typer.Option(False, "--json")):
             marker = "[green]PASS[/green]" if check["ok"] else "[red]FAIL[/red]"
             console.print(f"{marker}  {name}: {check['value']}")
     if not ok:
+        raise typer.Exit(code=2)
+
+
+@malware_app.command("scan")
+def malware_scan(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=True, readable=True),
+    rules: Path = typer.Option(..., "--rules", "-r", exists=True, readable=True),
+    recursive: bool = typer.Option(True, "--recursive/--no-recursive"),
+    json_output: bool = typer.Option(False, "--json"),
+):
+    """Scan a file or directory using caller-supplied YARA rules."""
+    try:
+        result = malware_scan_path(path, rules, recursive=recursive)
+    except SwiftFilezError as exc:
+        _fail(exc)
+        return
+    if json_output:
+        emit_json(result)
+    else:
+        render_mapping(
+            "YARA malware scan",
+            {
+                "engine": result["engine"],
+                "scanned_files": result["scanned_files"],
+                "matched_files": result["matched_files"],
+                "errors": len(result["errors"]),
+            },
+        )
+        for finding in result["findings"]:
+            console.print(f"[bold red]{finding['path']}[/bold red]")
+            for match in finding["matches"]:
+                console.print(f"  [yellow]{match['rule']}[/yellow]  tags={','.join(match['tags']) or '-'}")
+    if result["errors"]:
+        raise typer.Exit(code=1)
+    if result["findings"]:
         raise typer.Exit(code=2)
 
 
