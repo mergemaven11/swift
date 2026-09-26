@@ -10,7 +10,7 @@ runner = CliRunner()
 def test_version():
     """Verify version."""
     result = runner.invoke(app, ["--version"])
-    assert result.exit_code == 0 and "SwiftFilez 0.4.0" in result.stdout
+    assert result.exit_code == 0 and "SwiftFilez 0.5.0" in result.stdout
 
 
 def test_doctor_json():
