@@ -1,0 +1,46 @@
+SWIFTFILEZ END USER LICENSE AGREEMENT
+
+Copyright (c) 2026 mergemaven11. All rights reserved.
+
+IMPORTANT: PLEASE READ THIS AGREEMENT BEFORE INSTALLING OR USING SWIFTFILEZ.
+
+By installing, copying, launching, or using SwiftFilez (the "Software"), you agree to this End User License Agreement ("Agreement"). If you do not agree, do not install or use the Software.
+
+1. LIMITED LICENSE
+Subject to this Agreement, the copyright holder grants you a limited, revocable, non-exclusive, non-transferable license to install and use the Software on devices you control for private evaluation and personal use.
+
+2. OWNERSHIP
+The Software, source code, documentation, designs, branding, assets, and related materials are proprietary and remain owned by the copyright holder and applicable third-party licensors. No ownership rights are transferred to you.
+
+3. RESTRICTIONS
+Except with prior written permission, you may not:
+- copy or redistribute the Software except as reasonably necessary for your own installation or backup;
+- sell, sublicense, rent, lease, rehost, or commercially exploit the Software;
+- modify, adapt, publish, or create derivative works from the Software;
+- remove copyright, proprietary, or attribution notices;
+- use the Software or its contents to train, fine-tune, evaluate, or supply training data to an artificial-intelligence or machine-learning system;
+- use the Software in violation of applicable law or third-party rights.
+
+4. THIRD-PARTY COMPONENTS
+SwiftFilez may include or depend on third-party software. Those components remain subject to their respective licenses and notices.
+
+5. FILE, MALWARE, AND AI FEATURES
+SwiftFilez can inspect, hash, scan, and process local files. Malware scanning is rule-based and does not guarantee that a file is safe or malicious. Optional AI features may send artifact metadata or other information to the AI endpoint you configure. Review that provider's terms and privacy practices before enabling a remote endpoint.
+
+6. NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. USE OF THE SOFTWARE IS AT YOUR OWN RISK.
+
+7. LIMITATION OF LIABILITY
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER WILL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, PROFITS, REVENUE, OR BUSINESS ARISING FROM OR RELATED TO THE SOFTWARE OR ITS USE.
+
+8. TERMINATION
+This license terminates automatically if you materially violate this Agreement. Upon termination, you must stop using the Software and remove copies under your control, except where retention is required by law.
+
+9. CHANGES
+Future versions of SwiftFilez may be distributed under updated terms. The terms presented with the version you install govern that version unless otherwise stated.
+
+10. CONTACT
+For permissions or licensing questions, contact the repository owner through:
+https://github.com/mergemaven11/swift
+
+By continuing with installation, you acknowledge that you have read and agree to this Agreement.
