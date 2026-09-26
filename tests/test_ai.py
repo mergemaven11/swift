@@ -2,8 +2,6 @@
 
 import json
 
-import pytest
-
 from swift_files.ai import build_artifact_prompt, explain_artifact
 from swift_files.core import inspect_file
 
