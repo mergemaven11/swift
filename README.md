@@ -21,7 +21,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%20%E2%80%93%203.13-3776AB?logo=python&logoColor=white)
 ![CLI](https://img.shields.io/badge/CLI-Typer%20%2B%20Rich-7C3AED)
 ![Docker](https://img.shields.io/badge/Docker-non--root-2496ED?logo=docker&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-Proprietary-444)
 
 </div>
 
