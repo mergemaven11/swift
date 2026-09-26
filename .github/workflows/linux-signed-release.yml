@@ -1,9 +1,8 @@
-name: Linux Signed Release
+name: Linux Release
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     tags: ["v*"]
 
 permissions:
@@ -11,44 +10,83 @@ permissions:
   id-token: write
   attestations: write
 
+concurrency:
+  group: swiftfilez-linux-release
+  cancel-in-progress: false
+
 jobs:
   release:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, Linux, X64, swiftfilez]
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+
+      - name: Verify runner
+        run: |
+          python3 --version
+          git --version
+          uname -a
 
       - name: Install, test, and build
         run: |
-          python -m pip install --upgrade pip
+          rm -rf .venv-release build dist package
+          python3 -m venv .venv-release
+          . .venv-release/bin/activate
+          python -m pip install --upgrade pip setuptools wheel
           python -m pip install -e '.[dev,malware]' pyinstaller
           python -m pytest
           pyinstaller --clean --noconfirm --onefile --name swf main.py
           pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/desktop_launcher.py
           ./dist/swf --version
+
+      - name: Assemble Linux package
+        run: |
           mkdir -p package
           cp dist/swf dist/SwiftFilez package/
           cp README.md LICENSE package/
+          cp installer/EULA.txt installer/PRIVACY.txt package/
+          cp packaging/linux/install.sh packaging/linux/uninstall.sh package/
+          chmod +x package/swf package/SwiftFilez package/install.sh package/uninstall.sh
           tar -C package -czf SwiftFilez-Linux-x86_64.tar.gz .
           sha256sum SwiftFilez-Linux-x86_64.tar.gz > SwiftFilez-Linux-x86_64.tar.gz.sha256
+
+      - name: Smoke test installer
+        run: |
+          tmp_home="$(mktemp -d)"
+          SWIFTFILEZ_ACCEPT_LICENSE=yes HOME="$tmp_home" bash package/install.sh
+          PATH="$tmp_home/.local/bin:$PATH" swf --version
+          test -x "$tmp_home/.local/share/swiftfilez/SwiftFilez"
+          HOME="$tmp_home" bash package/uninstall.sh
+          test ! -e "$tmp_home/.local/bin/swf"
 
       - name: Generate signed build provenance
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: SwiftFilez-Linux-x86_64.tar.gz
 
+      - name: Upload Linux package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SwiftFilez-Linux-x86_64
+          path: |
+            SwiftFilez-Linux-x86_64.tar.gz
+            SwiftFilez-Linux-x86_64.tar.gz.sha256
+          if-no-files-found: error
+
       - name: Publish rolling Linux package
         if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view linux-latest >/dev/null 2>&1 &&             gh release upload linux-latest SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --clobber ||             gh release create linux-latest SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --target main --title "SwiftFilez Linux" --notes "Linux binary bundle with GitHub signed build provenance." --prerelease
+          gh release view linux-latest >/dev/null 2>&1 && \
+            gh release upload linux-latest SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --clobber || \
+            gh release create linux-latest SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --target main --title "SwiftFilez Linux" --notes "Standalone Linux bundle with installer, EULA, privacy notice, SHA-256 checksum, and GitHub build provenance." --prerelease
 
       - name: Publish versioned Linux package
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 &&             gh release upload "${{ github.ref_name }}" SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --clobber ||             gh release create "${{ github.ref_name }}" SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --generate-notes --title "SwiftFilez ${{ github.ref_name }}"
+          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 && \
+            gh release upload "${{ github.ref_name }}" SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --clobber || \
+            gh release create "${{ github.ref_name }}" SwiftFilez-Linux-x86_64.tar.gz SwiftFilez-Linux-x86_64.tar.gz.sha256 --generate-notes --title "SwiftFilez ${{ github.ref_name }}"
