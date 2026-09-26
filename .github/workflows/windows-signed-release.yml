@@ -1,0 +1,90 @@
+name: Windows Signed Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: swiftfilez-windows-signed-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: [self-hosted, Windows, X64, swiftfilez]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight signing runner
+        shell: pwsh
+        env:
+          SIGN_CERT_SHA1: ${{ secrets.SWIFTFILEZ_SIGN_CERT_SHA1 }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          if (-not $env:SIGN_CERT_SHA1) { throw "Set SWIFTFILEZ_SIGN_CERT_SHA1 to the Authenticode certificate thumbprint." }
+          if (-not (Get-Command signtool.exe -ErrorAction SilentlyContinue)) { throw "Install Windows SDK Signing Tools and add signtool.exe to PATH." }
+          if (-not (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe")) { throw "Install Inno Setup 6." }
+          $cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object Thumbprint -eq $env:SIGN_CERT_SHA1
+          if (-not $cert -or -not $cert.HasPrivateKey) { throw "Signing certificate/private key not available in CurrentUser\My." }
+
+      - name: Install and test
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]" pyinstaller
+          python -m pytest
+
+      - name: Build executables
+        shell: pwsh
+        run: |
+          pyinstaller --clean --noconfirm --onefile --name swf main.py
+          pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/windows_launcher.py
+          .\dist\swf.exe --version
+
+      - name: Sign executables
+        shell: pwsh
+        env:
+          SIGN_CERT_SHA1: ${{ secrets.SWIFTFILEZ_SIGN_CERT_SHA1 }}
+        run: |
+          $ts = "http://timestamp.digicert.com"
+          signtool.exe sign /sha1 $env:SIGN_CERT_SHA1 /fd SHA256 /tr $ts /td SHA256 .\dist\swf.exe
+          signtool.exe sign /sha1 $env:SIGN_CERT_SHA1 /fd SHA256 /tr $ts /td SHA256 .\dist\SwiftFilez.exe
+          signtool.exe verify /pa /v .\dist\swf.exe
+          signtool.exe verify /pa /v .\dist\SwiftFilez.exe
+
+      - name: Build and sign installer
+        shell: pwsh
+        env:
+          SIGN_CERT_SHA1: ${{ secrets.SWIFTFILEZ_SIGN_CERT_SHA1 }}
+        run: |
+          $version = (Select-String -Path swift_files\__init__.py -Pattern '__version__ = "([^"]+)"').Matches.Groups[1].Value
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version installer\SwiftFilez.iss
+          $asset = ".\installer\output\SwiftFilez-Setup.exe"
+          signtool.exe sign /sha1 $env:SIGN_CERT_SHA1 /fd SHA256 /tr "http://timestamp.digicert.com" /td SHA256 $asset
+          signtool.exe verify /pa /v $asset
+          Get-FileHash $asset -Algorithm SHA256 | Format-List
+
+      - name: Publish rolling signed installer
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $asset = "installer/output/SwiftFilez-Setup.exe"
+          gh release view windows-latest *> $null
+          if ($LASTEXITCODE -eq 0) { gh release upload windows-latest $asset --clobber }
+          else { gh release create windows-latest $asset --target main --title "SwiftFilez Windows" --notes "Signed Windows installer." --prerelease }
+
+      - name: Publish versioned signed installer
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $asset = "installer/output/SwiftFilez-Setup.exe"
+          gh release view "${{ github.ref_name }}" *> $null
+          if ($LASTEXITCODE -eq 0) { gh release upload "${{ github.ref_name }}" $asset --clobber }
+          else { gh release create "${{ github.ref_name }}" $asset --generate-notes --title "SwiftFilez ${{ github.ref_name }}" }
