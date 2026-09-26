@@ -80,6 +80,16 @@ See [`docs/PLATFORM_ENGINEERING.md`](docs/PLATFORM_ENGINEERING.md) for the archi
 
 ## Quick start
 
+### Windows installer
+
+Windows users can install SwiftFilez without setting up Python separately:
+
+**Download:** https://github.com/mergemaven11/swift/releases/latest/download/SwiftFilez-Setup.exe
+
+The installer includes the interactive SwiftFilez interface plus the packaged `swf.exe` CLI. Installer builds are produced by GitHub Actions and attached to tagged releases.
+
+> The Windows installer is currently unsigned. Windows SmartScreen may show an unrecognized-publisher warning until code signing is added.
+
 ### Install from a checkout
 
 ```bash
