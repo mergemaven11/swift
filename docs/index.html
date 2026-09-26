@@ -122,6 +122,7 @@
         <a href="#examples">Real-world examples</a>
         <a href="#ci">CI/CD usage</a>
         <a href="#json">JSON output</a>
+        <a href="#malware">Malware scan</a>
         <a href="#ai">AI explain</a>
         <a href="#editors">Vim / Nano</a>
         <a href="#safety">Safety model</a>
@@ -263,6 +264,14 @@ swf-artifact inspect ./dist/release.tar --recursive --json</code></pre>
           <pre><code>swf-artifact inspect app.whl --json
 swf-artifact inspect release.zip --recursive --json</code></pre>
           <p>JSON is intended for scripts, CI jobs, artifact reports, and future integrations. Human-friendly rendering may change visually over time; machine-readable fields should be treated as the integration surface.</p>
+        </section>
+
+        <section class="doc-section searchable" id="malware" data-search="malware yara scan rules security detection">
+          <div class="section-heading"><span>MALWARE SCANNING</span><h2>Scan files with YARA rules</h2></div>
+          <p>The desktop builds include the YARA runtime. Source installs can enable it with <code>python -m pip install -e '.[malware]'</code>. SwiftFilez does not silently download a third-party rule feed; point it at the rule set you trust.</p>
+          <pre><code>swf malware scan ./downloads --rules ./rules --json
+swf malware scan suspicious.exe --rules ./rules/windows.yar</code></pre>
+          <p>A clean scan exits <code>0</code>, a scanner/runtime failure exits <code>1</code>, and one or more YARA matches exit <code>2</code>. Matched rule names, tags, metadata, and paths are included in structured output.</p>
         </section>
 
         <section class="doc-section searchable" id="ai" data-search="ai ollama llm explain openai compatible local model">
