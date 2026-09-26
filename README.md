@@ -7,8 +7,8 @@
 
 # SwiftFilez
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/14ae7178-f9a1-425c-9b30-71159f162a2b/deploy-status)](https://app.netlify.com/projects/swiftfilez-docs/deploys)
-[![Browser CLI Demo](https://img.shields.io/badge/Live-Browser_CLI_Demo-37bfa4)](https://swiftfilez-docs.netlify.app/#browser-lab)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/14ae7178-f9a1-425c-9b30-71159f162a2b/deploy-status)](https://app.netlify.com/sites/swift-cli/deploys)
+[![Browser CLI Demo](https://img.shields.io/badge/Live-Browser_CLI_Demo-37bfa4)](https://swift-cli.netlify.app/)
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)
 [![Last Commit](https://img.shields.io/github/last-commit/mergemaven11/swift)](https://github.com/mergemaven11/swift/commits/main)
@@ -33,7 +33,7 @@
 
 The Netlify site is more than documentation: it includes a **safe, stateful SwiftFilez CLI simulation** that runs entirely in the browser against a demo filesystem.
 
-Try it at **https://swiftfilez-docs.netlify.app/#browser-lab**.
+Try it at **https://swift-cli.netlify.app/**.
 
 The browser lab supports representative commands including:
 
