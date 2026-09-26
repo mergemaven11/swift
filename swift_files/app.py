@@ -14,8 +14,6 @@ from rich.table import Table
 
 from . import __version__, csv_ops, docx_ops, pdf_ops
 from .ai import explain_artifact
-from .editors import open_in_editor
-from .malware import scan_path as malware_scan_path
 from .config import ENV_HASH, ENV_QUARANTINE, ENV_WORKERS, load_settings
 from .core import (
     SwiftFilezError,
@@ -28,6 +26,8 @@ from .core import (
     scan_files,
     verify_manifest,
 )
+from .editors import open_in_editor
+from .malware import scan_path as malware_scan_path
 from .ui import console, emit_json, human_bytes, render_mapping, render_records, success, warning
 
 app = typer.Typer(
