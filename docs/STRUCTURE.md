@@ -12,6 +12,7 @@
 │   ├── config.py              # environment-driven runtime settings
 │   ├── ai.py                  # optional OpenAI-compatible artifact explanations
 │   ├── editors.py             # safe vim/nvim/nano launcher
+│   ├── malware.py             # YARA-backed malware scanning
 │   ├── core.py                # hashing, scans, manifests, duplicates, safe copy
 │   ├── csv_ops.py             # CSV inspect/dedupe/sort/validate/summarize
 │   ├── docx_ops.py            # DOCX inspect/extract/copy
