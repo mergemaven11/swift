@@ -80,15 +80,15 @@ See [`docs/PLATFORM_ENGINEERING.md`](docs/PLATFORM_ENGINEERING.md) for the archi
 
 ## Quick start
 
-### Windows installer
+### Desktop downloads
 
-Windows users can install SwiftFilez without setting up Python separately:
+- **Windows:** https://github.com/mergemaven11/swift/releases/download/windows-latest/SwiftFilez-Setup.exe
+- **macOS:** https://github.com/mergemaven11/swift/releases/download/macos-latest/SwiftFilez-macOS.tar.gz
+- **Linux x86_64:** https://github.com/mergemaven11/swift/releases/download/linux-latest/SwiftFilez-Linux-x86_64.tar.gz
 
-**Download:** https://github.com/mergemaven11/swift/releases/download/windows-latest/SwiftFilez-Setup.exe
+Windows releases are Authenticode-signed on a dedicated self-hosted runner. macOS binaries are Apple code-signed. Linux publishes SHA-256 checksums plus GitHub cryptographic build provenance. A download appears after its signed release workflow completes successfully.
 
-The installer includes the interactive SwiftFilez interface plus the packaged `swf.exe` CLI. Installer builds are produced by GitHub Actions and attached to tagged releases.
-
-> The Windows installer is currently unsigned. Windows SmartScreen may show an unrecognized-publisher warning until code signing is added.
+See [Signed desktop releases](docs/SIGNED_RELEASES.md) for release-runner and signing setup.
 
 ### Install from a checkout
 
@@ -150,6 +150,9 @@ swf
 ├── duplicates              detect identical artifacts / quarantine extras
 ├── doctor                  environment and dependency diagnostics
 ├── config                  show effective runtime configuration
+├── edit                    open a file in vim/nvim/nano without a shell
+├── ai
+│   └── explain             explain local artifact metadata with an optional LLM
 ├── manifest
 │   ├── build               generate a versioned integrity manifest
 │   └── verify              detect missing, changed, or unexpected files
@@ -328,6 +331,40 @@ swf pdf copy architecture.pdf --output backup/architecture.pdf
 Encrypted PDFs can be inspected or extracted with `--password`.
 
 > Earlier versions of the README mentioned PDF signing as a TODO. Signing is intentionally not advertised because it is not implemented. The documented command surface matches tested functionality.
+
+---
+
+## Optional AI explanations
+
+SwiftFilez now has a real optional AI path:
+
+```bash
+swf ai explain ./release/app.bin
+```
+
+By default it targets an OpenAI-compatible local endpoint at `http://127.0.0.1:11434/v1` using model `llama3.2`, which makes local Ollama a natural default. You can override the endpoint and model:
+
+```bash
+export SWIFTFILEZ_AI_BASE_URL="https://your-compatible-endpoint/v1"
+export SWIFTFILEZ_AI_MODEL="your-model"
+export SWIFTFILEZ_AI_API_KEY="..."
+swf ai explain ./release/app.bin --json
+```
+
+The model receives SwiftFilez's deterministic artifact metadata; it is an explanation layer, not a malware verdict or trust decision.
+
+## Vim / Neovim / Nano
+
+SwiftFilez can launch a selected local file in a whitelisted terminal editor:
+
+```bash
+swf edit README.md --editor vim
+swf edit README.md --editor nvim
+swf edit README.md --editor nano
+```
+
+This integration never uses `shell=True` and does not expose arbitrary shell execution.
+
 
 ---
 
