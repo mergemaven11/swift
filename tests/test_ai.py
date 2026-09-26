@@ -1,6 +1,5 @@
 """Tests for the optional AI explanation layer."""
 
-import io
 import json
 
 import pytest
