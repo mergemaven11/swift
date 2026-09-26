@@ -1,0 +1,70 @@
+name: macOS Signed Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install, test, and build
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]' pyinstaller
+          python -m pytest
+          pyinstaller --clean --noconfirm --onefile --name swf main.py
+          pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/windows_launcher.py
+          ./dist/swf --version
+
+      - name: Import Apple signing certificate
+        env:
+          APPLE_CERT_P12_B64: ${{ secrets.APPLE_CERT_P12_B64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        run: |
+          test -n "$APPLE_CERT_P12_B64"
+          echo "$APPLE_CERT_P12_B64" | base64 --decode > certificate.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+      - name: Sign and verify binaries
+        env:
+          APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
+        run: |
+          test -n "$APPLE_SIGN_IDENTITY"
+          codesign --force --timestamp --options runtime --sign "$APPLE_SIGN_IDENTITY" dist/swf
+          codesign --force --timestamp --options runtime --sign "$APPLE_SIGN_IDENTITY" dist/SwiftFilez
+          codesign --verify --deep --strict --verbose=2 dist/swf
+          codesign --verify --deep --strict --verbose=2 dist/SwiftFilez
+          mkdir -p package
+          cp dist/swf dist/SwiftFilez package/
+          cp README.md LICENSE package/
+          tar -C package -czf SwiftFilez-macOS.tar.gz .
+          shasum -a 256 SwiftFilez-macOS.tar.gz > SwiftFilez-macOS.tar.gz.sha256
+
+      - name: Publish rolling macOS package
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view macos-latest >/dev/null 2>&1 &&             gh release upload macos-latest SwiftFilez-macOS.tar.gz SwiftFilez-macOS.tar.gz.sha256 --clobber ||             gh release create macos-latest SwiftFilez-macOS.tar.gz SwiftFilez-macOS.tar.gz.sha256 --target main --title "SwiftFilez macOS" --notes "Apple code-signed macOS binaries." --prerelease
+
+      - name: Publish versioned macOS package
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 &&             gh release upload "${{ github.ref_name }}" SwiftFilez-macOS.tar.gz SwiftFilez-macOS.tar.gz.sha256 --clobber ||             gh release create "${{ github.ref_name }}" SwiftFilez-macOS.tar.gz SwiftFilez-macOS.tar.gz.sha256 --generate-notes --title "SwiftFilez ${{ github.ref_name }}"
