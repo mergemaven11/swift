@@ -84,7 +84,7 @@ See [`docs/PLATFORM_ENGINEERING.md`](docs/PLATFORM_ENGINEERING.md) for the archi
 
 Windows users can install SwiftFilez without setting up Python separately:
 
-**Download:** https://github.com/mergemaven11/swift/releases/latest/download/SwiftFilez-Setup.exe
+**Download:** https://github.com/mergemaven11/swift/releases/download/windows-latest/SwiftFilez-Setup.exe
 
 The installer includes the interactive SwiftFilez interface plus the packaged `swf.exe` CLI. Installer builds are produced by GitHub Actions and attached to tagged releases.
 
