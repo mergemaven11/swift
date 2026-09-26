@@ -13,6 +13,8 @@ from rich.panel import Panel
 from rich.table import Table
 
 from . import __version__, csv_ops, docx_ops, pdf_ops
+from .ai import explain_artifact
+from .editors import open_in_editor
 from .config import ENV_HASH, ENV_QUARANTINE, ENV_WORKERS, load_settings
 from .core import (
     SwiftFilezError,
@@ -38,10 +40,12 @@ csv_app = typer.Typer(help="Inspect, validate, deduplicate, sort, and summarize 
 docx_app = typer.Typer(help="Inspect, extract, and copy DOCX files.")
 pdf_app = typer.Typer(help="Inspect, extract, and copy PDF files.")
 manifest_app = typer.Typer(help="Build and verify integrity manifests.")
+ai_app = typer.Typer(help="Optional AI-assisted explanations over local artifact metadata.")
 app.add_typer(csv_app, name="csv")
 app.add_typer(docx_app, name="docx")
 app.add_typer(pdf_app, name="pdf")
 app.add_typer(manifest_app, name="manifest")
+app.add_typer(ai_app, name="ai")
 
 
 def _fail(exc: Exception) -> None:
@@ -498,6 +502,40 @@ def doctor_command(json_output: bool = typer.Option(False, "--json")):
             console.print(f"{marker}  {name}: {check['value']}")
     if not ok:
         raise typer.Exit(code=2)
+
+
+@ai_app.command("explain")
+def ai_explain(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    base_url: str | None = typer.Option(None, "--base-url"),
+    model: str | None = typer.Option(None, "--model"),
+    json_output: bool = typer.Option(False, "--json"),
+):
+    """Explain deterministic local artifact metadata with an optional AI endpoint."""
+    try:
+        result = explain_artifact(path, base_url=base_url, model=model)
+    except SwiftFilezError as exc:
+        _fail(exc)
+        return
+    if json_output:
+        emit_json(result)
+    else:
+        console.print(Panel.fit(result["explanation"], title=f"AI explanation · {result['model']}"))
+
+
+@app.command("edit")
+def edit_command(
+    path: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    editor: str | None = typer.Option(None, "--editor", "-e", help="Allowed values: vim, nvim, nano."),
+):
+    """Open a local file in vim, nvim, or nano without invoking a shell."""
+    try:
+        exit_code = open_in_editor(path, editor)
+    except SwiftFilezError as exc:
+        _fail(exc)
+        return
+    if exit_code:
+        raise typer.Exit(code=exit_code)
 
 
 @app.command("ui")
