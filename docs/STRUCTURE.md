@@ -10,6 +10,8 @@
 ├── swift_files/
 │   ├── app.py                 # Typer command surface
 │   ├── config.py              # environment-driven runtime settings
+│   ├── ai.py                  # optional OpenAI-compatible artifact explanations
+│   ├── editors.py             # safe vim/nvim/nano launcher
 │   ├── core.py                # hashing, scans, manifests, duplicates, safe copy
 │   ├── csv_ops.py             # CSV inspect/dedupe/sort/validate/summarize
 │   ├── docx_ops.py            # DOCX inspect/extract/copy
@@ -19,6 +21,7 @@
 ├── tests/                     # unit and CLI policy-gate tests
 └── docs/
     ├── PLATFORM_ENGINEERING.md
+    ├── SIGNED_RELEASES.md
     └── STRUCTURE.md
 ```
 
