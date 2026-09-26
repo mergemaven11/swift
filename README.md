@@ -151,6 +151,8 @@ swf
 ├── doctor                  environment and dependency diagnostics
 ├── config                  show effective runtime configuration
 ├── edit                    open a file in vim/nvim/nano without a shell
+├── malware
+│   └── scan                scan files/directories with YARA rules
 ├── ai
 │   └── explain             explain local artifact metadata with an optional LLM
 ├── manifest
@@ -331,6 +333,32 @@ swf pdf copy architecture.pdf --output backup/architecture.pdf
 Encrypted PDFs can be inspected or extracted with `--password`.
 
 > Earlier versions of the README mentioned PDF signing as a TODO. Signing is intentionally not advertised because it is not implemented. The documented command surface matches tested functionality.
+
+---
+
+## Malware scanning with YARA
+
+Install the malware extra for source checkouts:
+
+```bash
+python -m pip install -e '.[malware]'
+```
+
+Desktop release builds bundle the YARA runtime. Supply a YARA rule file or directory:
+
+```bash
+swf malware scan ./downloads --rules ./rules --json
+swf malware scan suspicious.exe --rules ./rules/windows.yar
+```
+
+Exit codes follow the normal SwiftFilez contract:
+
+- `0` — no rule matches and no scan errors
+- `1` — scanner/runtime error
+- `2` — one or more YARA matches
+
+SwiftFilez intentionally does not let the AI layer override or invent malware findings.
+
 
 ---
 
