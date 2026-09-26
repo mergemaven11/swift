@@ -135,9 +135,16 @@
           <div class="callout"><strong>Local-first by design.</strong> Core artifact inspection does not require an account, API key, SaaS subscription, or network connection.</div>
         </section>
 
-        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart python pip clone doctor ui">
+        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart windows installer exe python pip clone doctor ui download">
           <div class="section-heading"><span>QUICK START</span><h2>Install SwiftFilez</h2></div>
-          <p>Swift currently installs from the repository. Python 3.10 or newer is supported.</p>
+          <div class="story">
+            <span>WINDOWS</span>
+            <h3>Use the desktop installer</h3>
+            <p>The Windows installer includes a double-clickable SwiftFilez interface and the packaged <code>swf.exe</code> command-line tool. No separate Python installation is required.</p>
+            <p><a class="button primary" href="https://github.com/mergemaven11/swift/releases/latest/download/SwiftFilez-Setup.exe">Download SwiftFilez for Windows (.exe)</a></p>
+            <p class="muted">Windows installer builds are published from tagged GitHub releases. The installer is currently unsigned, so Windows SmartScreen may show an unrecognized-publisher warning until code signing is added.</p>
+          </div>
+          <p>Prefer source installation, or using macOS/Linux? Python 3.10 or newer is supported.</p>
           <pre><code>git clone https://github.com/mergemaven11/swift.git
 cd swift
 python -m venv .venv
