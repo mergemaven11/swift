@@ -122,6 +122,8 @@
         <a href="#examples">Real-world examples</a>
         <a href="#ci">CI/CD usage</a>
         <a href="#json">JSON output</a>
+        <a href="#ai">AI explain</a>
+        <a href="#editors">Vim / Nano</a>
         <a href="#safety">Safety model</a>
         <a href="#troubleshooting">Troubleshooting</a>
         <a href="#roadmap">What comes next</a>
@@ -135,16 +137,27 @@
           <div class="callout"><strong>Local-first by design.</strong> Core artifact inspection does not require an account, API key, SaaS subscription, or network connection.</div>
         </section>
 
-        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart windows installer exe python pip clone doctor ui download">
+        <section class="doc-section searchable" id="quickstart" data-search="install setup quickstart windows macos linux installer exe tar download signed">
           <div class="section-heading"><span>QUICK START</span><h2>Install SwiftFilez</h2></div>
-          <div class="story">
-            <span>WINDOWS</span>
-            <h3>Use the desktop installer</h3>
-            <p>The Windows installer includes a double-clickable SwiftFilez interface and the packaged <code>swf.exe</code> command-line tool. No separate Python installation is required.</p>
-            <p><a class="button primary" href="https://github.com/mergemaven11/swift/releases/download/windows-latest/SwiftFilez-Setup.exe">Download SwiftFilez for Windows (.exe)</a></p>
-            <p class="muted">Windows installer builds are published from tagged GitHub releases. The installer is currently unsigned, so Windows SmartScreen may show an unrecognized-publisher warning until code signing is added.</p>
+          <div class="cards">
+            <article>
+              <strong>Windows</strong>
+              <p>Signed installer with SwiftFilez UI + <code>swf.exe</code>.</p>
+              <p><a class="button primary" href="https://github.com/mergemaven11/swift/releases/download/windows-latest/SwiftFilez-Setup.exe">Download Windows .exe</a></p>
+            </article>
+            <article>
+              <strong>macOS</strong>
+              <p>Apple code-signed terminal binaries bundled for macOS.</p>
+              <p><a class="button primary" href="https://github.com/mergemaven11/swift/releases/download/macos-latest/SwiftFilez-macOS.tar.gz">Download macOS</a></p>
+            </article>
+            <article>
+              <strong>Linux x86_64</strong>
+              <p>Standalone binaries with SHA-256 checksum and signed GitHub build provenance.</p>
+              <p><a class="button primary" href="https://github.com/mergemaven11/swift/releases/download/linux-latest/SwiftFilez-Linux-x86_64.tar.gz">Download Linux</a></p>
+            </article>
           </div>
-          <p>Prefer source installation, or using macOS/Linux? Python 3.10 or newer is supported.</p>
+          <div class="callout"><strong>Signed releases.</strong> Windows uses Authenticode on the self-hosted release runner, macOS uses Apple code signing, and Linux publishes GitHub cryptographic build provenance plus SHA-256 checksums. A platform download appears after its signed release workflow has completed successfully.</div>
+          <p>Source installation remains available on every platform with Python 3.10 or newer.</p>
           <pre><code>git clone https://github.com/mergemaven11/swift.git
 cd swift
 python -m venv .venv
@@ -158,7 +171,6 @@ source .venv/bin/activate
 python -m pip install -e .
 swf --version
 swf doctor</code></pre>
-          <p><code>swf doctor</code> is the fastest way to confirm that the local environment is healthy before using Swift in a script or pipeline.</p>
         </section>
 
         <section class="doc-section searchable" id="inspect" data-search="inspect hash metadata sha256 mime file basic command">
@@ -251,6 +263,27 @@ swf-artifact inspect ./dist/release.tar --recursive --json</code></pre>
           <pre><code>swf-artifact inspect app.whl --json
 swf-artifact inspect release.zip --recursive --json</code></pre>
           <p>JSON is intended for scripts, CI jobs, artifact reports, and future integrations. Human-friendly rendering may change visually over time; machine-readable fields should be treated as the integration surface.</p>
+        </section>
+
+        <section class="doc-section searchable" id="ai" data-search="ai ollama llm explain openai compatible local model">
+          <div class="section-heading"><span>OPTIONAL AI</span><h2>Explain artifact metadata with a local or compatible model</h2></div>
+          <p><code>swf ai explain</code> sends only the deterministic metadata SwiftFilez collected for the selected artifact to an OpenAI-compatible chat endpoint. The default is a local Ollama-compatible endpoint at <code>http://127.0.0.1:11434/v1</code> using model <code>llama3.2</code>.</p>
+          <pre><code>swf ai explain ./release/app.bin
+
+# Custom compatible endpoint/model
+SWIFTFILEZ_AI_BASE_URL=https://example.invalid/v1
+SWIFTFILEZ_AI_MODEL=my-model
+SWIFTFILEZ_AI_API_KEY=...
+swf ai explain ./release/app.bin --json</code></pre>
+          <div class="callout warn"><strong>AI is explanation, not detection.</strong> SwiftFilez does not let the model decide that a file is safe or malicious. Hashing, inspection, policy checks, and future malware scanning stay deterministic.</div>
+        </section>
+
+        <section class="doc-section searchable" id="editors" data-search="vim nano nvim editor edit terminal">
+          <div class="section-heading"><span>TERMINAL EDITORS</span><h2>Open files in Vim, Neovim, or Nano</h2></div>
+          <pre><code>swf edit README.md --editor vim
+swf edit README.md --editor nvim
+swf edit README.md --editor nano</code></pre>
+          <p>The editor integration uses an explicit allowlist and passes an argument vector directly to the editor. It does not use <code>shell=True</code> and it does not expose a general-purpose shell command runner.</p>
         </section>
 
         <section class="doc-section searchable" id="safety" data-search="safety security local archive zip bomb extraction limits depth children member bytes network privacy">
