@@ -3,7 +3,6 @@ name: Windows Installer
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     tags: ["v*"]
 
 permissions:
@@ -42,6 +41,19 @@ jobs:
         run: |
           $version = (Select-String -Path swift_files\__init__.py -Pattern '__version__ = "([^"]+)"').Matches.Groups[1].Value
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version installer\SwiftFilez.iss
+          if (-not (Test-Path "installer\output\SwiftFilez-Setup.exe")) { throw "Installer output was not created." }
+
+      - name: Smoke test silent install and PATH
+        shell: pwsh
+        run: |
+          $installer = (Resolve-Path "installer\output\SwiftFilez-Setup.exe").Path
+          $installDir = Join-Path $env:LOCALAPPDATA "Programs\SwiftFilez"
+          & $installer /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /TASKS="addtopath"
+          if ($LASTEXITCODE -ne 0) { throw "Installer exited with code $LASTEXITCODE" }
+          & "$installDir\swf.exe" --version
+          if (-not (Test-Path "$installDir\SwiftFilez.exe")) { throw "SwiftFilez.exe was not installed." }
+          $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+          if (($userPath -split ';') -notcontains $installDir) { throw "Installer did not add SwiftFilez to the user PATH." }
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
@@ -49,4 +61,3 @@ jobs:
           name: SwiftFilez-Windows-Installer
           path: installer/output/SwiftFilez-Setup.exe
           if-no-files-found: error
-
