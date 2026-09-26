@@ -25,7 +25,7 @@ jobs:
           python -m pip install -e '.[dev]' pyinstaller
           python -m pytest
           pyinstaller --clean --noconfirm --onefile --name swf main.py
-          pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/windows_launcher.py
+          pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/desktop_launcher.py
           ./dist/swf --version
           mkdir -p package
           cp dist/swf dist/SwiftFilez package/
