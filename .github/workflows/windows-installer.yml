@@ -1,0 +1,65 @@
+name: Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install . pyinstaller
+
+      - name: Build SwiftFilez executables
+        shell: pwsh
+        run: |
+          pyinstaller --clean --noconfirm --onefile --name swf main.py
+          pyinstaller --clean --noconfirm --onefile --name SwiftFilez --collect-all textual packaging/windows_launcher.py
+          .\dist\swf.exe --version
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path swift_files\__init__.py -Pattern '__version__ = "([^"]+)"').Matches.Groups[1].Value
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version installer\SwiftFilez.iss
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SwiftFilez-Windows-Installer
+          path: installer/output/SwiftFilez-Setup.exe
+          if-no-files-found: error
+
+      - name: Publish installer to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $asset = "installer/output/SwiftFilez-Setup.exe"
+          gh release view "${{ github.ref_name }}" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload "${{ github.ref_name }}" $asset --clobber
+          } else {
+            gh release create "${{ github.ref_name }}" $asset --generate-notes --title "SwiftFilez ${{ github.ref_name }}"
+          }
